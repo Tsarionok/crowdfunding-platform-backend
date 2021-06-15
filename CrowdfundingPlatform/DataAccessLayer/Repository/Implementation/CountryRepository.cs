@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataAccessLayer.Context;
 using DataAccessLayer.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer.Repository.Implementation
 {
@@ -15,30 +16,34 @@ namespace DataAccessLayer.Repository.Implementation
 
         }
 
-        // TODO method's realization
-        public void Create(Country entity)
+        public void Create(Country country)
         {
-            throw new NotImplementedException();
+            Context.Countries.Add(country);
+            Context.SaveChanges();
         }
 
         public void DeleteById(int id)
         {
-            throw new NotImplementedException();
+            Context.Countries.Remove(Context.Countries
+                .Where(c => c.Id.Equals(id))
+                .First());
+            Context.SaveChanges();
         }
 
         public ICollection<Country> ReadAll()
         {
-            throw new NotImplementedException();
+            return Context.Countries.ToList();
         }
 
         public Country ReadById(int id)
         {
-            throw new NotImplementedException();
+            return Context.Countries.Where(c => c.Id.Equals(id)).First();
         }
 
-        public void Update(Country entity)
+        public void Update(Country country)
         {
-            throw new NotImplementedException();
+            Context.Entry(country).State = EntityState.Modified;
+            Context.SaveChanges();
         }
     }
 }
