@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Entity
 {
-    class Category
+    public class Category : BaseEntity
     {
+        public string Name { get; set; }
     }
 }

@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Entity
 {
-    class Class1
+    public enum Sex
     {
+        Man,
+        Woman
     }
 }

@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Entity
 {
-    class Comment
+    public class Comment : BaseEntity
     {
+        public User User { get; set; }
+
+        public Project Project { get; set; }
+
+        public string Message { get; set; }
     }
 }

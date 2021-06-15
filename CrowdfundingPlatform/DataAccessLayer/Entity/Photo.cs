@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Entity
 {
-    class Photo
+    public class Photo : BaseEntity
     {
+        public Project Project { get; set; }
+
+        public byte[] Image { get; set; }
     }
 }

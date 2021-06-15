@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Entity
 {
-    class BaseEntity
+    public abstract class BaseEntity
     {
+        public int Id { get; set; }
     }
 }
