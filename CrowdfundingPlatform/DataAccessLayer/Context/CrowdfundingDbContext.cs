@@ -10,6 +10,10 @@ namespace DataAccessLayer.Context
 {
     public class CrowdfundingDbContext : DbContext
     {
+        public CrowdfundingDbContext(DbContextOptions<CrowdfundingDbContext> options) : base(options)
+        {
+        }
+
         public DbSet<Country> Countries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

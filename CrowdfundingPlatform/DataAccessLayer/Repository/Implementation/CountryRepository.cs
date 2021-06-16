@@ -24,10 +24,13 @@ namespace DataAccessLayer.Repository.Implementation
 
         public void DeleteById(int id)
         {
-            Context.Countries.Remove(Context.Countries
+            if (Context.Countries.Any(c => c.Id.Equals(id)))
+            {
+                Context.Countries.Remove(Context.Countries
                 .Where(c => c.Id.Equals(id))
                 .First());
-            Context.SaveChanges();
+                Context.SaveChanges();
+            }
         }
 
         public ICollection<Country> ReadAll()
