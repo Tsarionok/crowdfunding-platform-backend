@@ -16,6 +16,10 @@ namespace DataAccessLayer.Context
 
         public DbSet<Country> Countries { get; set; }
 
+        public DbSet<City> Cities { get; set; }
+
+        public DbSet<Category> Categories { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Country>(e => e.HasIndex(c => c.Name).IsUnique());

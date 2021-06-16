@@ -10,5 +10,9 @@ namespace DataAccessLayer.Context
     public interface IUnitOfWork
     {
         public CountryRepository Countries { get; } 
+
+        public CityRepository Cities { get; }
+
+        public CategoryRepository Categories { get; }
     }
 }

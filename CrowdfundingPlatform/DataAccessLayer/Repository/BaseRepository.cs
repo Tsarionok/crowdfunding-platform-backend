@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataAccessLayer.Context;
+using DataAccessLayer.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer.Repository
 {

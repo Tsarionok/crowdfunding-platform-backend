@@ -10,7 +10,12 @@ namespace DataAccessLayer.Context
     public class UnitOfWork : IUnitOfWork
     {
         private readonly CrowdfundingDbContext Context;
+
         private CountryRepository CountryRepository;
+
+        private CityRepository CityRepository;
+
+        private CategoryRepository CategoryRepository;
 
         public UnitOfWork(CrowdfundingDbContext context)
         {
@@ -29,5 +34,28 @@ namespace DataAccessLayer.Context
             }
         }
 
+        public CityRepository Cities
+        {
+            get
+            {
+                if (CityRepository == null)
+                {
+                    CityRepository = new CityRepository(Context);
+                }
+                return CityRepository;
+            }
+        }
+
+        public CategoryRepository Categories
+        {
+            get
+            {
+                if (CategoryRepository == null)
+                {
+                    CategoryRepository = new CategoryRepository(Context);
+                }
+                return CategoryRepository;
+            }
+        }
     }
 }
