@@ -16,37 +16,45 @@ namespace DataAccessLayer.Repository.Implementation
 
         }
 
-        public void Create(Country country)
+        public async Task Create(Country country)
         {
-            Context.Countries.Add(country);
-            Context.SaveChanges();
+            await Context.Countries.AddAsync(country);
+            await Context.SaveChangesAsync();
         }
 
-        public void DeleteById(int id)
+        public async Task<Country> DeleteById(int id)
         {
+            Country country = null;
             if (Context.Countries.Any(c => c.Id.Equals(id)))
             {
+                country = await Context.Countries.Where(c => c.Id.Equals(id)).FirstAsync();
                 Context.Countries.Remove(Context.Countries
                 .Where(c => c.Id.Equals(id))
-                .First());
-                Context.SaveChanges();
+                .FirstAsync().Result);
+                await Context.SaveChangesAsync();
             }
+            return await Task.Run(() => country);
         }
 
-        public ICollection<Country> ReadAll()
+        public async Task<IEnumerable<Country>> ReadAll()
         {
-            return Context.Countries.ToList();
+            return await Context.Countries.ToListAsync();
         }
 
-        public Country ReadById(int id)
+        public async Task<Country> ReadById(int id)
         {
-            return Context.Countries.Where(c => c.Id.Equals(id)).First();
+            return await Context.Countries.Where(c => c.Id.Equals(id)).FirstAsync();
         }
 
-        public void Update(Country country)
+        public async Task Update(Country country)
         {
             Context.Entry(country).State = EntityState.Modified;
-            Context.SaveChanges();
+            await Context.SaveChangesAsync();
+        }
+
+        public async Task<bool> HasAny(int id)
+        {
+            return await Context.Countries.AnyAsync(c => c.Id.Equals(id));
         }
     }
 }

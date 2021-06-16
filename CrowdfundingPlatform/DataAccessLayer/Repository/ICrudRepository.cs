@@ -9,14 +9,14 @@ namespace DataAccessLayer.Repository
 {
     public interface ICrudRepository<T> where T : BaseEntity
     {
-        public void Create(T entity);
+        public Task Create(T entity);
 
-        public T ReadById(int id);
+        public Task<T> ReadById(int id);
 
-        public ICollection<T> ReadAll();
+        public Task<IEnumerable<T>> ReadAll();
 
-        public void Update(T entity);
+        public Task Update(T entity);
 
-        public void DeleteById(int id);
+        public Task<T> DeleteById(int id);
     }
 }

@@ -21,33 +21,53 @@ namespace CrowdfundingPlatform.Controllers
         }
 
         [HttpGet]
-        public ICollection<CountryDTO> Get()
+        public async Task<ActionResult<IEnumerable<CountryDTO>>> Get()
         {
-            return _service.ReadAll();
+            return Ok(await _service.ReadAll());
         }
 
         [HttpGet("{id}")]
-        public CountryDTO Get(int id)
+        public async Task<ActionResult<CountryDTO>> Get(int id)
         {
-            return _service.ReadById(id);
+            return Ok(await _service.ReadById(id));
         }
 
         [HttpPost]
-        public void Post(CountryDTO country)
+        public async Task<ActionResult<CountryDTO>> Post(CountryDTO country)
         {
-            _service.Create(country);
+            if (country == null)
+            {
+                return BadRequest();
+            }
+            await _service.Create(country);
+            return Ok(country);
         }
 
         [HttpPut]
-        public void Put(CountryDTO country)
+        public async Task<ActionResult> Put(CountryDTO country)
         {
-            _service.Update(country);
+            if (country == null)
+            {
+                return BadRequest();
+            }
+            if (!_service.HasAny(country.Id))
+            {
+                return NotFound();
+            }
+            await _service.Update(country);
+            return Ok();
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult<CountryDTO>> Delete(int id)
         {
-            _service.DeleteById(id);
+            CountryDTO country = null;
+            if (_service.HasAny(id))
+            {
+                country = _service.ReadById(id).Result;
+            }
+            await _service.DeleteById(id);
+            return Ok(country);
         }
     }
 }

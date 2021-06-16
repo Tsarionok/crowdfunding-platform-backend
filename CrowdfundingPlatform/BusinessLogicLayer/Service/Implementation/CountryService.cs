@@ -18,38 +18,43 @@ namespace BusinessLogicLayer.Service.Implementation
 
         }
 
-        public void Create(CountryDTO country)
+        public async Task Create(CountryDTO country)
         {
             IConfigurationProvider configuration = new MapperConfiguration(cfg => cfg.CreateMap<CountryDTO, Country>());
             Mapper mapper = new Mapper(configuration);
-            _unitOfWork.Countries.Create(mapper.Map<Country>(country));
-
+            await _unitOfWork.Countries.Create(mapper.Map<Country>(country));
         }
 
-        public void DeleteById(int id)
-        {
-            _unitOfWork.Countries.DeleteById(id);
-        }
-
-        public ICollection<CountryDTO> ReadAll()
+        public async Task<CountryDTO> DeleteById(int id)
         {
             IConfigurationProvider configuration = new MapperConfiguration(cfg => cfg.CreateMap<Country, CountryDTO>());
             Mapper mapper = new Mapper(configuration);
-            return mapper.Map<ICollection<CountryDTO>>(_unitOfWork.Countries.ReadAll());
-
+            return await Task.Run(() => mapper.Map<CountryDTO>(_unitOfWork.Countries.DeleteById(id).Result));
         }
 
-        public CountryDTO ReadById(int id)
+        public async Task<IEnumerable<CountryDTO>> ReadAll()
         {
             IConfigurationProvider configuration = new MapperConfiguration(cfg => cfg.CreateMap<Country, CountryDTO>());
             Mapper mapper = new Mapper(configuration);
-            return mapper.Map<CountryDTO>(_unitOfWork.Countries.ReadById(id));
+            return await Task.Run(() => mapper.Map<IEnumerable<CountryDTO>>(_unitOfWork.Countries.ReadAll().Result));
         }
 
-        public void Update(CountryDTO country)
+        public async Task<CountryDTO> ReadById(int id)
         {
-            _unitOfWork.Countries.Update(new Mapper(new MapperConfiguration(cfg => cfg.CreateMap<CountryDTO, Country>()
-                )).Map<Country>(country));
+            IConfigurationProvider configuration = new MapperConfiguration(cfg => cfg.CreateMap<Country, CountryDTO>());
+            Mapper mapper = new Mapper(configuration);
+            return await Task.Run(() => mapper.Map<CountryDTO>(_unitOfWork.Countries.ReadById(id).Result));
+        }
+
+        public async Task Update(CountryDTO country)
+        {
+            await _unitOfWork.Countries.Update(new Mapper(new MapperConfiguration(cfg => cfg.CreateMap<CountryDTO, Country>()))
+                .Map<Country>(country));
+        }
+
+        public bool HasAny(int id)
+        {
+            return _unitOfWork.Countries.HasAny(id).Result;
         }
     }
 }

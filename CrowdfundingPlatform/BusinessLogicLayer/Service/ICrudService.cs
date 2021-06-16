@@ -9,14 +9,14 @@ namespace BusinessLogicLayer.Service
 {
     public interface ICrudService<T> where T : BaseDTO 
     {
-        void Create(T dto);
+        public Task Create(T dto);
 
-        T ReadById(int id);
+        public Task<T> ReadById(int id);
 
-        ICollection<T> ReadAll();
+        public Task<IEnumerable<T>> ReadAll();
 
-        void Update(T dto);
+        public Task Update(T dto);
 
-        void DeleteById(int id);
+        public Task<T> DeleteById(int id);
     }
 }

@@ -9,5 +9,6 @@ namespace BusinessLogicLayer.Service
 {
     public interface ICountryService : ICrudService<CountryDTO>
     {
+        public bool HasAny(int id);
     }
 }

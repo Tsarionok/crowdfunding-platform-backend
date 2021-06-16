@@ -9,5 +9,6 @@ namespace DataAccessLayer.Repository
 {
     public interface ICountryRepository : ICrudRepository<Country>
     {
+        public Task<bool> HasAny(int id);
     }
 }
