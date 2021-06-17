@@ -25,12 +25,12 @@ namespace DataAccessLayer.Repository.Implementation
         public async Task<Country> DeleteById(int id)
         {
             Country country = null;
-            if (!HasAny(id).Result)
+            if (HasAny(id).Result)
             {
                 country = await Context.Countries.Where(c => c.Id.Equals(id)).FirstAsync();
                 Context.Countries.Remove(Context.Countries
-                .Where(c => c.Id.Equals(id))
-                .FirstAsync().Result);
+                    .Where(c => c.Id.Equals(id))
+                    .FirstAsync().Result);
                 await Context.SaveChangesAsync();
             }
             return await Task.Run(() => country);
