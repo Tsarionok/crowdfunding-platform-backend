@@ -50,5 +50,10 @@ namespace BusinessLogicLayer.Service.Implementation
             await _unitOfWork.Cities.Update(new Mapper(new MapperConfiguration(cfg => cfg.CreateMap<CityDTO, City>()))
                 .Map<City>(city));
         }
+
+        public bool HasAny(int id)
+        {
+            return _unitOfWork.Cities.HasAny(id).Result;
+        }
     }
 }

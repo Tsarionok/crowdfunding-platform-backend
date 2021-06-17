@@ -34,6 +34,7 @@ namespace CrowdfundingPlatform
             services.AddControllers();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ICountryService, CountryService>();
+            services.AddScoped<ICityService, CityService>();
             services.AddDbContext<CrowdfundingDbContext>(a => a.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddSwaggerGen(c =>
             {

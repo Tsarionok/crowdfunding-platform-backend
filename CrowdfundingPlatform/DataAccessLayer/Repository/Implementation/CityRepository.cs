@@ -52,5 +52,10 @@ namespace DataAccessLayer.Repository.Implementation
             Context.Entry(city).State = EntityState.Modified;
             await Context.SaveChangesAsync();
         }
+
+        public async Task<bool> HasAny(int id)
+        {
+            return await Context.Cities.AnyAsync(c => c.Id.Equals(id));
+        }
     }
 }
