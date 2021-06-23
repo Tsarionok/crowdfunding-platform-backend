@@ -35,7 +35,7 @@ namespace DataAccessLayer.Repository.Implementation
             return await Task.Run(() => comment);
         }
 
-        public async Task<IEnumerable<Comment>> ReadAll()
+        public async Task<ICollection<Comment>> ReadAll()
         {
             return await Context.Comments.ToListAsync();
         }

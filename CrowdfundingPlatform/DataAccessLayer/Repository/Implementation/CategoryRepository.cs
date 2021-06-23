@@ -36,7 +36,7 @@ namespace DataAccessLayer.Repository.Implementation
             return await Task.Run(() => category);
         }
 
-        public async Task<IEnumerable<Category>> ReadAll()
+        public async Task<ICollection<Category>> ReadAll()
         {
             return await Context.Categories.ToListAsync();
         }

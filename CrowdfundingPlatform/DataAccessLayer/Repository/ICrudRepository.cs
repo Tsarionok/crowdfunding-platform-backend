@@ -13,7 +13,7 @@ namespace DataAccessLayer.Repository
 
         public Task<T> ReadById(int id);
 
-        public Task<IEnumerable<T>> ReadAll();
+        public Task<ICollection<T>> ReadAll();
 
         public Task Update(T entity);
 

@@ -35,7 +35,7 @@ namespace DataAccessLayer.Repository.Implementation
             return await Task.Run(() => donationHistory);
         }
 
-        public async Task<IEnumerable<DonationHistory>> ReadAll()
+        public async Task<ICollection<DonationHistory>> ReadAll()
         {
             return await Context.DonationHistories.ToListAsync();
         }

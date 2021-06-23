@@ -9,6 +9,7 @@ namespace BusinessLogicLayer.DTO
     public enum Sex
     {
         Man,
-        Woman
+        Woman,
+        Undefined
     }
 }

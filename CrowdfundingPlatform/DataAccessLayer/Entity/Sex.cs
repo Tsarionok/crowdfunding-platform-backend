@@ -9,6 +9,7 @@ namespace DataAccessLayer.Entity
     public enum Sex
     {
         Man,
-        Woman
+        Woman,
+        Undefined
     }
 }

@@ -35,7 +35,7 @@ namespace DataAccessLayer.Repository.Implementation
             return await Task.Run(() => photo);
         }
 
-        public async Task<IEnumerable<Photo>> ReadAll()
+        public async Task<ICollection<Photo>> ReadAll()
         {
             return await Context.Photos.ToListAsync();
         }

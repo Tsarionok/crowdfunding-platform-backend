@@ -36,7 +36,7 @@ namespace DataAccessLayer.Repository.Implementation
             return await Task.Run(() => country);
         }
 
-        public async Task<IEnumerable<Country>> ReadAll()
+        public async Task<ICollection<Country>> ReadAll()
         {
             return await Context.Countries.Include(c => c.Cities).ToListAsync();
         }

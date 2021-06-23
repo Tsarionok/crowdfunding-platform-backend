@@ -34,7 +34,7 @@ namespace DataAccessLayer.Repository.Implementation
             return await Task.Run(() => project);
         }
 
-        public async Task<IEnumerable<Project>> ReadAll()
+        public async Task<ICollection<Project>> ReadAll()
         {
             return await Context.Projects.ToListAsync();
         }

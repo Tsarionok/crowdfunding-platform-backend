@@ -23,8 +23,8 @@ namespace BusinessLogicLayer.Service.Implementation
             {
                 Id = city.Id,
                 Name = city.Name,
-                CountryId = city.CountryId,
-                Country = _unitOfWork.Countries.ReadById(city.CountryId).Result
+                CountryId = city.Country.Id,
+                Country = _unitOfWork.Countries.ReadById(city.Country.Id).Result
             };
             await _unitOfWork.Cities.Create(newCity);
         }
