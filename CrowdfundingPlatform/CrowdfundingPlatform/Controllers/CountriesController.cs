@@ -29,7 +29,7 @@ namespace CrowdfundingPlatform.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CountryDTO>> Get(int id)
         {
-            if (!_service.HasAny(id))
+            if (!_service.HasAnyItem(id))
             {
                 return NotFound();
             }
