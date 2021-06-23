@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.DTO
 {
-    public class CountryDTO : BaseDTO
+    public class CountryWithCitiesDTO : CountryDTO
     {
-        public string Name { get; set; }
+        public ICollection<CityDTO> Cities { get; set; }
     }
 }

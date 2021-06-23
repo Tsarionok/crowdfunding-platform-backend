@@ -18,7 +18,7 @@ namespace BusinessLogicLayer.Service.Implementation
 
         }
 
-        public async Task Create(CountryDTO country)
+        public async Task Create(CountryWithCitiesDTO country)
         {
             Country addingCountry = new Country
             {
@@ -26,23 +26,14 @@ namespace BusinessLogicLayer.Service.Implementation
                 Name = country.Name,
                 Cities = new List<City>()
             };
-            foreach (CityDTO citydto in country.Cities)
-            {
-                City city = new City()
-                {
-                    Id = citydto.Id,
-                    Name = citydto.Name
-                };
-                addingCountry.Cities.Add(city);
-            }
             await _unitOfWork.Countries.Create(addingCountry);
         }
 
-        public async Task<CountryDTO> DeleteById(int id)
+        public async Task<CountryWithCitiesDTO> DeleteById(int id)
         {
             Country deletedCountry = _unitOfWork.Countries.DeleteById(id).Result;
 
-            CountryDTO country = new CountryDTO
+            CountryWithCitiesDTO country = new CountryWithCitiesDTO
             {
                 Id = deletedCountry.Id,
                 Name = deletedCountry.Name,
@@ -62,13 +53,13 @@ namespace BusinessLogicLayer.Service.Implementation
             return await Task.Run(() => country);
         }
 
-        public async Task<ICollection<CountryDTO>> ReadAll()
+        public async Task<ICollection<CountryWithCitiesDTO>> ReadAll()
         {
-            ICollection<CountryDTO> countries = new List<CountryDTO>();
+            ICollection<CountryWithCitiesDTO> countries = new List<CountryWithCitiesDTO>();
 
             foreach (Country readableCountry in _unitOfWork.Countries.ReadAll().Result)
             {
-                CountryDTO country = new CountryDTO
+                CountryWithCitiesDTO country = new CountryWithCitiesDTO
                 {
                     Id = readableCountry.Id,
                     Name = readableCountry.Name,
@@ -88,11 +79,11 @@ namespace BusinessLogicLayer.Service.Implementation
             return await Task.Run(() => countries);
         }
 
-        public async Task<CountryDTO> ReadById(int id)
+        public async Task<CountryWithCitiesDTO> ReadById(int id)
         {
             Country readableCountry = _unitOfWork.Countries.ReadById(id).Result;
 
-            CountryDTO country = new CountryDTO
+            CountryWithCitiesDTO country = new CountryWithCitiesDTO
             {
                 Id = readableCountry.Id,
                 Name = readableCountry.Name,
@@ -110,7 +101,7 @@ namespace BusinessLogicLayer.Service.Implementation
             return await Task.Run(() => country);
         }
 
-        public async Task Update(CountryDTO country)
+        public async Task Update(CountryWithCitiesDTO country)
         {
             Country updatedCountry = new Country
             {
@@ -118,12 +109,12 @@ namespace BusinessLogicLayer.Service.Implementation
                 Name = country.Name,
                 Cities = new List<City>()
             };
-            foreach (CityDTO updatedCity in country.Cities)
+            foreach (CityDTO citydto in country.Cities)
             {
                 City city = new City()
                 {
-                    Id = updatedCity.Id,
-                    Name = updatedCity.Name
+                    Id = citydto.Id,
+                    Name = citydto.Name
                 };
                 updatedCountry.Cities.Add(city);
             }

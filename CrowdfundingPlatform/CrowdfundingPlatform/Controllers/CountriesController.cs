@@ -37,7 +37,7 @@ namespace CrowdfundingPlatform.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CountryDTO>> Post(CountryDTO country)
+        public async Task<ActionResult<CountryDTO>> Post(CountryWithCitiesDTO country)
         {
             if (country == null)
             {
@@ -48,7 +48,7 @@ namespace CrowdfundingPlatform.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> Put(CountryDTO country)
+        public async Task<ActionResult> Put(CountryWithCitiesDTO country)
         {
             if (country == null)
             {
