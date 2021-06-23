@@ -29,6 +29,10 @@ namespace CrowdfundingPlatform.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CityDTO>> Get(int id)
         {
+            if (!_service.HasAnyItem(id))
+            {
+                return NotFound();
+            }
             return Ok(await _service.ReadById(id));
         }
 
