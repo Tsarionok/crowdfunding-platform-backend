@@ -97,6 +97,7 @@ namespace BusinessLogicLayer.Service.Implementation
 
             UserDTO deletedUser = new UserDTO
             {
+                Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Avatar = user.Avatar,
@@ -147,6 +148,7 @@ namespace BusinessLogicLayer.Service.Implementation
 
                 users.Add(new UserDTO
                 {
+                    Id = readUser.Id,
                     FirstName = readUser.FirstName,
                     LastName = readUser.LastName,
                     Avatar = readUser.Avatar,
@@ -197,6 +199,7 @@ namespace BusinessLogicLayer.Service.Implementation
 
             return Task.Run(() => new UserDTO
             {
+                Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Avatar = user.Avatar,
@@ -244,6 +247,7 @@ namespace BusinessLogicLayer.Service.Implementation
 
             User updatedUser = new User
             {
+                Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Avatar = user.Avatar,
