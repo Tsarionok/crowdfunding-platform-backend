@@ -50,7 +50,7 @@ namespace CrowdfundingPlatform.Controllers
             {
                 return BadRequest();
             }
-            if (!_service.HasAny(country.Id))
+            if (!_service.HasAnyItem(country.Id))
             {
                 return NotFound();
             }
@@ -62,7 +62,7 @@ namespace CrowdfundingPlatform.Controllers
         public async Task<ActionResult<CountryDTO>> Delete(int id)
         {
             CountryDTO country = null;
-            if (_service.HasAny(id))
+            if (_service.HasAnyItem(id))
             {
                 country = _service.ReadById(id).Result;
             }

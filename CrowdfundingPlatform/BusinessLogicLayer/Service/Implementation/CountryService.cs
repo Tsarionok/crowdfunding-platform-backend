@@ -84,9 +84,9 @@ namespace BusinessLogicLayer.Service.Implementation
                 .Map<Country>(country));
         }
 
-        public bool HasAny(int id)
+        public bool HasAnyItem(int id)
         {
-            return _unitOfWork.Countries.HasAny(id).Result;
+            return _unitOfWork.Countries.HasAnyItem(id).Result;
         }
     }
 }

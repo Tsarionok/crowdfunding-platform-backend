@@ -65,7 +65,7 @@ namespace BusinessLogicLayer.Service.Implementation
                 .Map<City>(city));
         }
 
-        public bool HasAny(int id)
+        public bool HasAnyItem(int id)
         {
             return _unitOfWork.Cities.HasAny(id).Result;
         }

@@ -25,7 +25,7 @@ namespace DataAccessLayer.Repository.Implementation
         public async Task<Country> DeleteById(int id)
         {
             Country country = null;
-            if (HasAny(id).Result)
+            if (HasAnyItem(id).Result)
             {
                 country = await Context.Countries.Where(c => c.Id.Equals(id)).FirstAsync();
                 Context.Countries.Remove(Context.Countries
@@ -43,7 +43,7 @@ namespace DataAccessLayer.Repository.Implementation
 
         public async Task<Country> ReadById(int id)
         {
-            return await Context.Countries.Where(c => c.Id.Equals(id)).FirstAsync();
+            return await Context.Countries.Where(c => c.Id.Equals(id)).Include(c => c.Cities).FirstAsync();
         }
 
         public async Task Update(Country country)
@@ -52,7 +52,7 @@ namespace DataAccessLayer.Repository.Implementation
             await Context.SaveChangesAsync();
         }
 
-        public async Task<bool> HasAny(int id)
+        public async Task<bool> HasAnyItem(int id)
         {
             return await Context.Countries.AnyAsync(c => c.Id.Equals(id));
         }

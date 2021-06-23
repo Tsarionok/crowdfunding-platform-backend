@@ -7,7 +7,7 @@ using DataAccessLayer.Entity;
 
 namespace DataAccessLayer.Repository
 {
-    public interface ICrudRepository<T> where T : BaseEntity
+    public interface ICrudRepository<T> : IExistenceRepository where T : BaseEntity
     {
         public Task Create(T entity);
 
