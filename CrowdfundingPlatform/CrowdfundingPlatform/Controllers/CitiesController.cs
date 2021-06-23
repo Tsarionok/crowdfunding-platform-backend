@@ -50,7 +50,7 @@ namespace CrowdfundingPlatform.Controllers
             {
                 return BadRequest();
             }
-            if (!_service.HasAny(city.Id))
+            if (!_service.HasAnyItem(city.Id))
             {
                 return NotFound();
             }
@@ -62,7 +62,7 @@ namespace CrowdfundingPlatform.Controllers
         public async Task<ActionResult<CityDTO>> Delete(int id)
         {
             CityDTO city = null;
-            if (_service.HasAny(id))
+            if (_service.HasAnyItem(id))
             {
                 city = _service.ReadById(id).Result;
             }

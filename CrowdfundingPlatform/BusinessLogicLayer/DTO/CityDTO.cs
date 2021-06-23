@@ -10,6 +10,6 @@ namespace BusinessLogicLayer.DTO
     {
         public string Name { get; set; }
 
-        public CountryDTO Country { get; set; }
+        public int CountryId { get; set; }
     }
 }

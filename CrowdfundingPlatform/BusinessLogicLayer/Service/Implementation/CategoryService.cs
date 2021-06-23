@@ -32,11 +32,11 @@ namespace BusinessLogicLayer.Service.Implementation
             return await Task.Run(() => mapper.Map<CategoryDTO>(_unitOfWork.Categories.DeleteById(id).Result));
         }
 
-        public async Task<IEnumerable<CategoryDTO>> ReadAll()
+        public async Task<ICollection<CategoryDTO>> ReadAll()
         {
             IConfigurationProvider configuration = new MapperConfiguration(cfg => cfg.CreateMap<Category, CategoryDTO>());
             Mapper mapper = new Mapper(configuration);
-            return await Task.Run(() => mapper.Map<IEnumerable<CategoryDTO>>(_unitOfWork.Categories.ReadAll().Result));
+            return await Task.Run(() => mapper.Map<ICollection<CategoryDTO>>(_unitOfWork.Categories.ReadAll().Result));
         }
 
         public async Task<CategoryDTO> ReadById(int id)
