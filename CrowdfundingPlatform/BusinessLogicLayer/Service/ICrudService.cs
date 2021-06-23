@@ -13,7 +13,7 @@ namespace BusinessLogicLayer.Service
 
         public Task<T> ReadById(int id);
 
-        public Task<IEnumerable<T>> ReadAll();
+        public Task<ICollection<T>> ReadAll();
 
         public Task Update(T dto);
 
