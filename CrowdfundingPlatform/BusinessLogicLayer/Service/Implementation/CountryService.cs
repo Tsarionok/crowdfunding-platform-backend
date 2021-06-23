@@ -40,48 +40,94 @@ namespace BusinessLogicLayer.Service.Implementation
 
         public async Task<CountryDTO> DeleteById(int id)
         {
-            IConfigurationProvider configuration = new MapperConfiguration(cfg => cfg.CreateMap<Country, CountryDTO>());
-            Mapper mapper = new Mapper(configuration);
-            return await Task.Run(() => mapper.Map<CountryDTO>(_unitOfWork.Countries.DeleteById(id).Result));
+            Country deletedCountry = _unitOfWork.Countries.DeleteById(id).Result;
+
+            CountryDTO country = new CountryDTO
+            {
+                Id = deletedCountry.Id,
+                Name = deletedCountry.Name,
+                Cities = new List<CityDTO>()
+            };
+
+            foreach (City deletedCity in deletedCountry.Cities)
+            {
+                CityDTO city = new CityDTO()
+                {
+                    Id = deletedCity.Id,
+                    Name = deletedCity.Name
+                };
+                country.Cities.Add(city);
+            }
+
+            return await Task.Run(() => country);
         }
 
         public async Task<ICollection<CountryDTO>> ReadAll()
         {
-            IEnumerable<Country> countries = await _unitOfWork.Countries.ReadAll();
-            ICollection<CountryDTO> convertedCountries = new List<CountryDTO>();
-            foreach (Country country in countries)
+            ICollection<CountryDTO> countries = new List<CountryDTO>();
+
+            foreach (Country readableCountry in _unitOfWork.Countries.ReadAll().Result)
             {
-                CountryDTO convertedCountry = new CountryDTO
+                CountryDTO country = new CountryDTO
                 {
-                    Id = country.Id,
-                    Name = country.Name,
+                    Id = readableCountry.Id,
+                    Name = readableCountry.Name,
                     Cities = new List<CityDTO>()
                 };
-                foreach (City city in country.Cities)
+                foreach (City city in readableCountry.Cities)
                 {
                     CityDTO cityDTO = new CityDTO
                     {
                         Id = city.Id,
                         Name = city.Name
                     };
-                    convertedCountry.Cities.Add(cityDTO);
+                    country.Cities.Add(cityDTO);
                 }
-                convertedCountries.Add(convertedCountry);
+                countries.Add(country);
             }
-            return convertedCountries;
+            return await Task.Run(() => countries);
         }
 
         public async Task<CountryDTO> ReadById(int id)
         {
-            IConfigurationProvider configuration = new MapperConfiguration(cfg => cfg.CreateMap<Country, CountryDTO>());
-            Mapper mapper = new Mapper(configuration);
-            return await Task.Run(() => mapper.Map<CountryDTO>(_unitOfWork.Countries.ReadById(id).Result));
+            Country readableCountry = _unitOfWork.Countries.ReadById(id).Result;
+
+            CountryDTO country = new CountryDTO
+            {
+                Id = readableCountry.Id,
+                Name = readableCountry.Name,
+                Cities = new List<CityDTO>()
+            };
+            foreach (City city in readableCountry.Cities)
+            {
+                CityDTO cityDTO = new CityDTO
+                {
+                    Id = city.Id,
+                    Name = city.Name
+                };
+                country.Cities.Add(cityDTO);
+            }
+            return await Task.Run(() => country);
         }
 
         public async Task Update(CountryDTO country)
         {
-            await _unitOfWork.Countries.Update(new Mapper(new MapperConfiguration(cfg => cfg.CreateMap<CountryDTO, Country>()))
-                .Map<Country>(country));
+            Country updatedCountry = new Country
+            {
+                Id = country.Id,
+                Name = country.Name,
+                Cities = new List<City>()
+            };
+            foreach (CityDTO updatedCity in country.Cities)
+            {
+                City city = new City()
+                {
+                    Id = updatedCity.Id,
+                    Name = updatedCity.Name
+                };
+                updatedCountry.Cities.Add(city);
+            }
+            await _unitOfWork.Countries.Update(updatedCountry);
         }
 
         public bool HasAnyItem(int id)
