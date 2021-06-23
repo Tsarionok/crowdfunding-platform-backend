@@ -14,5 +14,17 @@ namespace DataAccessLayer.Context
         public CityRepository Cities { get; }
 
         public CategoryRepository Categories { get; }
+
+        public UserRepository Users { get; }
+
+        public ProjectRepository Projects { get; }
+
+        public PhotoRepository Photos { get; }
+
+        public UserProjectRepository UserProjects { get; }
+
+        public CommentRepository Comments { get; }
+
+        public DonationHistoryRepository DonationHistories { get; }
     }
 }
