@@ -26,9 +26,9 @@ namespace DataAccessLayer.Repository.Implementation
             User user = null;
             if (HasAnyItem(id).Result)
             {
-                user = await Context.Users.Where(c => c.Id.Equals(id)).FirstAsync();
+                user = await Context.Users.Where(u => u.Id.Equals(id)).FirstAsync();
                 Context.Users.Remove(Context.Users
-                    .Where(c => c.Id.Equals(id))
+                    .Where(u => u.Id.Equals(id))
                     .FirstAsync().Result);
                 await Context.SaveChangesAsync();
             }
