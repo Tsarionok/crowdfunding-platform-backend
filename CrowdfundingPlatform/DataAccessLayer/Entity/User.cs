@@ -25,5 +25,7 @@ namespace DataAccessLayer.Entity
         public string EncryptedPassword { get; set; }
 
         public bool IsTwoFactorAuthenticationEnabled { get; set; }
+
+        public City CityId { get; set; }
     }
 }

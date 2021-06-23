@@ -9,7 +9,6 @@ namespace BusinessLogicLayer.DTO
 {
     public abstract class BaseDTO
     {
-        [Key]
         public int Id { get; set; }
     }
 }

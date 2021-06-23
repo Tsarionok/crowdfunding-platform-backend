@@ -19,9 +19,14 @@ namespace BusinessLogicLayer.Service.Implementation
 
         public async Task Create(CityDTO city)
         {
-            IConfigurationProvider configuration = new MapperConfiguration(cfg => cfg.CreateMap<CityDTO, City>());
-            Mapper mapper = new Mapper(configuration);
-            await _unitOfWork.Cities.Create(mapper.Map<City>(city));
+            City newCity = new City
+            {
+                Id = city.Id,
+                Name = city.Name,
+                CountryId = city.CountryId,
+                Country = _unitOfWork.Countries.ReadById(city.CountryId).Result
+            };
+            await _unitOfWork.Cities.Create(newCity);
         }
 
         public async Task<CityDTO> DeleteById(int id)
@@ -31,11 +36,20 @@ namespace BusinessLogicLayer.Service.Implementation
             return await Task.Run(() => mapper.Map<CityDTO>(_unitOfWork.Cities.DeleteById(id).Result));
         }
 
-        public async Task<IEnumerable<CityDTO>> ReadAll()
+        public async Task<ICollection<CityDTO>> ReadAll()
         {
-            IConfigurationProvider configuration = new MapperConfiguration(cfg => cfg.CreateMap<City, CityDTO>());
-            Mapper mapper = new Mapper(configuration);
-            return await Task.Run(() => mapper.Map<IEnumerable<CityDTO>>(_unitOfWork.Cities.ReadAll().Result));
+            IEnumerable<City> cities = await _unitOfWork.Cities.ReadAll();
+            ICollection<CityDTO> convertedCities = new List<CityDTO>();
+            foreach (City city in cities)
+            {
+                CityDTO convertedCity = new CityDTO
+                {
+                    Id = city.Id,
+                    Name = city.Name
+                };
+                convertedCities.Add(convertedCity);
+            }
+            return convertedCities;
         }
 
         public async Task<CityDTO> ReadById(int id)
@@ -49,6 +63,11 @@ namespace BusinessLogicLayer.Service.Implementation
         {
             await _unitOfWork.Cities.Update(new Mapper(new MapperConfiguration(cfg => cfg.CreateMap<CityDTO, City>()))
                 .Map<City>(city));
+        }
+
+        public bool HasAnyItem(int id)
+        {
+            return _unitOfWork.Cities.HasAny(id).Result;
         }
     }
 }

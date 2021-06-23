@@ -4,14 +4,16 @@ using DataAccessLayer.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(CrowdfundingDbContext))]
-    partial class CrowdfundingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210617101448_AddCitiesAndCategories")]
+    partial class AddCitiesAndCategories
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,15 +78,10 @@ namespace DataAccessLayer.Migrations
             modelBuilder.Entity("DataAccessLayer.Entity.City", b =>
                 {
                     b.HasOne("DataAccessLayer.Entity.Country", "Country")
-                        .WithMany("Cities")
+                        .WithMany()
                         .HasForeignKey("CountryId");
 
                     b.Navigation("Country");
-                });
-
-            modelBuilder.Entity("DataAccessLayer.Entity.Country", b =>
-                {
-                    b.Navigation("Cities");
                 });
 #pragma warning restore 612, 618
         }

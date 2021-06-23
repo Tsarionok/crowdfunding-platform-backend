@@ -39,7 +39,7 @@ namespace DataAccessLayer.Repository.Implementation
 
         public async Task<IEnumerable<City>> ReadAll()
         {
-            return await Context.Cities.ToListAsync();
+            return await Context.Cities.Include(c => c.Country).ToListAsync();
         }
 
         public async Task<City> ReadById(int id)
@@ -51,6 +51,16 @@ namespace DataAccessLayer.Repository.Implementation
         {
             Context.Entry(city).State = EntityState.Modified;
             await Context.SaveChangesAsync();
+        }
+
+        public async Task<bool> HasAny(int id)
+        {
+            return await Context.Cities.AnyAsync(c => c.Id.Equals(id));
+        }
+
+        public async Task<bool> HasAnyItem(int id)
+        {
+            return await Context.Cities.AnyAsync(c => c.Id.Equals(id));
         }
     }
 }

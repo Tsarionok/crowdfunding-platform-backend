@@ -11,25 +11,25 @@ namespace CrowdfundingPlatform.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CountriesController : ControllerBase
+    public class CitiesController : ControllerBase
     {
-        ICountryService _service;
+        ICityService _service;
 
-        public CountriesController(ICountryService service)
+        public CitiesController(ICityService service)
         {
             _service = service;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CountryDTO>>> Get()
+        public async Task<ActionResult<IEnumerable<CityDTO>>> Get()
         {
             return Ok(await _service.ReadAll());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<CountryDTO>> Get(int id)
+        public async Task<ActionResult<CityDTO>> Get(int id)
         {
-            if (!_service.HasAny(id))
+            if (!_service.HasAnyItem(id))
             {
                 return NotFound();
             }
@@ -37,41 +37,41 @@ namespace CrowdfundingPlatform.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CountryDTO>> Post(CountryDTO country)
+        public async Task<ActionResult<CityDTO>> Post(CityDTO city)
         {
-            if (country == null)
+            if (city == null)
             {
                 return BadRequest();
             }
-            await _service.Create(country);
-            return Ok(country);
+            await _service.Create(city);
+            return Ok(city);
         }
 
         [HttpPut]
-        public async Task<ActionResult> Put(CountryDTO country)
+        public async Task<ActionResult> Put(CityDTO city)
         {
-            if (country == null)
+            if (city == null)
             {
                 return BadRequest();
             }
-            if (!_service.HasAnyItem(country.Id))
+            if (!_service.HasAnyItem(city.Id))
             {
                 return NotFound();
             }
-            await _service.Update(country);
+            await _service.Update(city);
             return Ok();
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<CountryDTO>> Delete(int id)
+        public async Task<ActionResult<CityDTO>> Delete(int id)
         {
-            CountryDTO country = null;
+            CityDTO city = null;
             if (_service.HasAnyItem(id))
             {
-                country = _service.ReadById(id).Result;
+                city = _service.ReadById(id).Result;
             }
             await _service.DeleteById(id);
-            return Ok(country);
+            return Ok(city);
         }
     }
 }

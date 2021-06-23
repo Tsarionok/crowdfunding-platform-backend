@@ -15,6 +15,5 @@ namespace BusinessLogicLayer.Service
         {
             _unitOfWork = unitOfWork;
         }
-
     }
 }

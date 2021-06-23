@@ -9,5 +9,7 @@ namespace BusinessLogicLayer.DTO
     public class CountryDTO : BaseDTO
     {
         public string Name { get; set; }
+
+        public ICollection<CityDTO> Cities { get; set; }
     }
 }

@@ -20,9 +20,22 @@ namespace BusinessLogicLayer.Service.Implementation
 
         public async Task Create(CountryDTO country)
         {
-            IConfigurationProvider configuration = new MapperConfiguration(cfg => cfg.CreateMap<CountryDTO, Country>());
-            Mapper mapper = new Mapper(configuration);
-            await _unitOfWork.Countries.Create(mapper.Map<Country>(country));
+            Country addingCountry = new Country
+            {
+                Id = country.Id,
+                Name = country.Name,
+                Cities = new List<City>()
+            };
+            foreach (CityDTO citydto in country.Cities)
+            {
+                City city = new City()
+                {
+                    Id = citydto.Id,
+                    Name = citydto.Name
+                };
+                addingCountry.Cities.Add(city);
+            }
+            await _unitOfWork.Countries.Create(addingCountry);
         }
 
         public async Task<CountryDTO> DeleteById(int id)
@@ -32,11 +45,30 @@ namespace BusinessLogicLayer.Service.Implementation
             return await Task.Run(() => mapper.Map<CountryDTO>(_unitOfWork.Countries.DeleteById(id).Result));
         }
 
-        public async Task<IEnumerable<CountryDTO>> ReadAll()
+        public async Task<ICollection<CountryDTO>> ReadAll()
         {
-            IConfigurationProvider configuration = new MapperConfiguration(cfg => cfg.CreateMap<Country, CountryDTO>());
-            Mapper mapper = new Mapper(configuration);
-            return await Task.Run(() => mapper.Map<IEnumerable<CountryDTO>>(_unitOfWork.Countries.ReadAll().Result));
+            IEnumerable<Country> countries = await _unitOfWork.Countries.ReadAll();
+            ICollection<CountryDTO> convertedCountries = new List<CountryDTO>();
+            foreach (Country country in countries)
+            {
+                CountryDTO convertedCountry = new CountryDTO
+                {
+                    Id = country.Id,
+                    Name = country.Name,
+                    Cities = new List<CityDTO>()
+                };
+                foreach (City city in country.Cities)
+                {
+                    CityDTO cityDTO = new CityDTO
+                    {
+                        Id = city.Id,
+                        Name = city.Name
+                    };
+                    convertedCountry.Cities.Add(cityDTO);
+                }
+                convertedCountries.Add(convertedCountry);
+            }
+            return convertedCountries;
         }
 
         public async Task<CountryDTO> ReadById(int id)
@@ -52,9 +84,9 @@ namespace BusinessLogicLayer.Service.Implementation
                 .Map<Country>(country));
         }
 
-        public bool HasAny(int id)
+        public bool HasAnyItem(int id)
         {
-            return _unitOfWork.Countries.HasAny(id).Result;
+            return _unitOfWork.Countries.HasAnyItem(id).Result;
         }
     }
 }

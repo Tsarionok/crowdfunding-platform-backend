@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DataAccessLayer.Entity;
 
-namespace DataAccessLayer.Repository
+namespace BusinessLogicLayer.Service
 {
-    public interface ICategoryRepository : ICrudRepository<Category>
+    public interface IExistenceService
     {
+        public bool HasAnyItem(int id);
     }
 }

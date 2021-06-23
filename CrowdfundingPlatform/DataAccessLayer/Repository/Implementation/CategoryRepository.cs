@@ -25,7 +25,7 @@ namespace DataAccessLayer.Repository.Implementation
         public async Task<Category> DeleteById(int id)
         {
             Category category = null;
-            if (!HasAny(id).Result)
+            if (!HasAnyItem(id).Result)
             {
                 category = await Context.Categories.Where(c => c.Id.Equals(id)).FirstAsync();
                 Context.Categories.Remove(Context.Categories
@@ -52,7 +52,7 @@ namespace DataAccessLayer.Repository.Implementation
             await Context.SaveChangesAsync();
         }
 
-        public async Task<bool> HasAny(int id)
+        public async Task<bool> HasAnyItem(int id)
         {
             return await Context.Categories.AnyAsync(c => c.Id.Equals(id));
         }
