@@ -20,36 +20,57 @@ namespace BusinessLogicLayer.Service.Implementation
 
         public async Task Create(CategoryDTO category)
         {
-            IConfigurationProvider configuration = new MapperConfiguration(cfg => cfg.CreateMap<CategoryDTO, Category>());
-            Mapper mapper = new Mapper(configuration);
-            await _unitOfWork.Categories.Create(mapper.Map<Category>(category));
+            await _unitOfWork.Categories.Create(new Category
+            {
+                Name = category.Name
+            });
         }
 
         public async Task<CategoryDTO> DeleteById(int id)
         {
-            IConfigurationProvider configuration = new MapperConfiguration(cfg => cfg.CreateMap<Category, CategoryDTO>());
-            Mapper mapper = new Mapper(configuration);
-            return await Task.Run(() => mapper.Map<CategoryDTO>(_unitOfWork.Categories.DeleteById(id).Result));
+            Category deletedCategory = _unitOfWork.Categories.DeleteById(id).Result;
+
+            return await Task.Run(() => new CategoryDTO
+            {
+                Id = deletedCategory.Id,
+                Name = deletedCategory.Name
+            });
         }
 
         public async Task<ICollection<CategoryDTO>> ReadAll()
         {
-            IConfigurationProvider configuration = new MapperConfiguration(cfg => cfg.CreateMap<Category, CategoryDTO>());
-            Mapper mapper = new Mapper(configuration);
-            return await Task.Run(() => mapper.Map<ICollection<CategoryDTO>>(_unitOfWork.Categories.ReadAll().Result));
+            ICollection<CategoryDTO> categories = new List<CategoryDTO>();
+
+            foreach (Category readableCategory in _unitOfWork.Categories.ReadAll().Result)
+            {
+                categories.Add(new CategoryDTO
+                {
+                    Id = readableCategory.Id,
+                    Name = readableCategory.Name
+                });
+            }
+
+            return await Task.Run(() => categories);
         }
 
         public async Task<CategoryDTO> ReadById(int id)
         {
-            IConfigurationProvider configuration = new MapperConfiguration(cfg => cfg.CreateMap<Category, CategoryDTO>());
-            Mapper mapper = new Mapper(configuration);
-            return await Task.Run(() => mapper.Map<CategoryDTO>(_unitOfWork.Categories.ReadById(id).Result));
+            Category readableCategory = _unitOfWork.Categories.ReadById(id).Result;
+
+            return await Task.Run(() => new CategoryDTO
+            {
+                Id = readableCategory.Id,
+                Name = readableCategory.Name
+            });
         }
 
         public async Task Update(CategoryDTO category)
         {
-            await _unitOfWork.Categories.Update(new Mapper(new MapperConfiguration(cfg => cfg.CreateMap<CategoryDTO, Category>()))
-                .Map<Category>(category));
+            await _unitOfWork.Categories.Update(new Category
+            {
+                Id = category.Id,
+                Name = category.Name
+            });
         }
     }
 }
