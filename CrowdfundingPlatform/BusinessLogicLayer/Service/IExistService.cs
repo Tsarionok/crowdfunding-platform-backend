@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.Service
 {
-    public interface IExistService
+    public interface IExistenceService
     {
-        public bool HasAny(int id);
+        public bool HasAnyItem(int id);
     }
 }
