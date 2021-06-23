@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.DTO
 {
-    public class CityDTO : BaseDTO
+    public enum Sex
     {
-        public string Name { get; set; }
-
-        public CountryDTO Country { get; set; }
+        Man,
+        Woman
     }
 }
