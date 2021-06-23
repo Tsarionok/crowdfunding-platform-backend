@@ -65,7 +65,7 @@ namespace BusinessLogicLayer.Service.Implementation
 
         public async Task<UserDTO> DeleteById(int id)
         {
-            User user = _unitOfWork.Users.ReadById(id).Result;
+            User user = _unitOfWork.Users.DeleteById(id).Result;
             DTO.Sex sex;
             switch (user.Sex)
             {

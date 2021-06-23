@@ -41,7 +41,7 @@ namespace BusinessLogicLayer.Service.Implementation
 
         public async Task<ProjectDTO> DeleteById(int id)
         {
-            Project project = _unitOfWork.Projects.ReadById(id).Result;
+            Project project = _unitOfWork.Projects.DeleteById(id).Result;
 
             Category category = project.Category;
             CategoryDTO createdCategory = new CategoryDTO
