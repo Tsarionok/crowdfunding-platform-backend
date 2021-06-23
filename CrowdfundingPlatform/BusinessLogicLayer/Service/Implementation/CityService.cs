@@ -19,50 +19,64 @@ namespace BusinessLogicLayer.Service.Implementation
 
         public async Task Create(CityDTO city)
         {
-            City newCity = new City
+            await _unitOfWork.Cities.Create(new City
+            {
+                Name = city.Name,
+                CountryId = city.Country.Id,
+                Country = _unitOfWork.Countries.ReadById(city.Country.Id).Result
+            });
+        }
+
+        public async Task<CityDTO> DeleteById(int id)
+        {
+            City city = _unitOfWork.Cities.DeleteById(id).Result;
+
+            return await Task.Run(() => new CityDTO
+            {
+                Id = city.Id,
+                Name = city.Name,
+                Country = new CountryService(_unitOfWork).ReadById(city.CountryId).Result
+            });
+        }
+
+        public async Task<ICollection<CityDTO>> ReadAll()
+        {
+            ICollection<CityDTO> cities = new List<CityDTO>();
+
+            foreach (City readableCity in _unitOfWork.Cities.ReadAll().Result)
+            {
+                cities.Add(new CityDTO
+                {
+                    Id = readableCity.Id,
+                    Name = readableCity.Name,
+                    Country = new CountryService(_unitOfWork).ReadById(readableCity.CountryId).Result
+                });
+            }
+
+            return await Task.Run(() => cities);
+        }
+
+        public async Task<CityDTO> ReadById(int id)
+        {
+            City readableCity = _unitOfWork.Cities.ReadById(id).Result;
+
+            return await Task.Run(() => new CityDTO
+            {
+                Id = readableCity.Id,
+                Name = readableCity.Name,
+                Country = new CountryService(_unitOfWork).ReadById(readableCity.CountryId).Result
+            });
+        }
+
+        public async Task Update(CityDTO city)
+        {
+            await _unitOfWork.Cities.Update(new City
             {
                 Id = city.Id,
                 Name = city.Name,
                 CountryId = city.Country.Id,
                 Country = _unitOfWork.Countries.ReadById(city.Country.Id).Result
-            };
-            await _unitOfWork.Cities.Create(newCity);
-        }
-
-        public async Task<CityDTO> DeleteById(int id)
-        {
-            IConfigurationProvider configuration = new MapperConfiguration(cfg => cfg.CreateMap<City, CityDTO>());
-            Mapper mapper = new Mapper(configuration);
-            return await Task.Run(() => mapper.Map<CityDTO>(_unitOfWork.Cities.DeleteById(id).Result));
-        }
-
-        public async Task<ICollection<CityDTO>> ReadAll()
-        {
-            IEnumerable<City> cities = await _unitOfWork.Cities.ReadAll();
-            ICollection<CityDTO> convertedCities = new List<CityDTO>();
-            foreach (City city in cities)
-            {
-                CityDTO convertedCity = new CityDTO
-                {
-                    Id = city.Id,
-                    Name = city.Name
-                };
-                convertedCities.Add(convertedCity);
-            }
-            return convertedCities;
-        }
-
-        public async Task<CityDTO> ReadById(int id)
-        {
-            IConfigurationProvider configuration = new MapperConfiguration(cfg => cfg.CreateMap<City, CityDTO>());
-            Mapper mapper = new Mapper(configuration);
-            return await Task.Run(() => mapper.Map<CityDTO>(_unitOfWork.Cities.ReadById(id).Result));
-        }
-
-        public async Task Update(CityDTO city)
-        {
-            await _unitOfWork.Cities.Update(new Mapper(new MapperConfiguration(cfg => cfg.CreateMap<CityDTO, City>()))
-                .Map<City>(city));
+            });
         }
 
         public bool HasAnyItem(int id)
