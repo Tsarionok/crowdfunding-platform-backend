@@ -31,6 +31,11 @@ namespace BusinessLogicLayer.Service.Implementation
         {
             City city = _unitOfWork.Cities.DeleteById(id).Result;
 
+            if (city == null)
+            {
+                return null;
+            }
+
             return await Task.Run(() => new CityDTO
             {
                 Id = city.Id,
@@ -58,6 +63,11 @@ namespace BusinessLogicLayer.Service.Implementation
 
         public async Task<CityDTO> ReadById(int id)
         {
+            if (!_unitOfWork.Cities.HasAnyItem(id).Result)
+            {
+                return null;
+            }
+
             City readableCity = _unitOfWork.Cities.ReadById(id).Result;
 
             return await Task.Run(() => new CityDTO
@@ -77,11 +87,6 @@ namespace BusinessLogicLayer.Service.Implementation
                 CountryId = city.Country.Id,
                 Country = _unitOfWork.Countries.ReadById(city.Country.Id).Result
             });
-        }
-
-        public bool HasAnyItem(int id)
-        {
-            return _unitOfWork.Cities.HasAny(id).Result;
         }
     }
 }

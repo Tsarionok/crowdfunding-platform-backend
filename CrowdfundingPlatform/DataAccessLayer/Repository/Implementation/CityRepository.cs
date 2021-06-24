@@ -53,14 +53,9 @@ namespace DataAccessLayer.Repository.Implementation
             await Context.SaveChangesAsync();
         }
 
-        public async Task<bool> HasAny(int id)
-        {
-            return await Context.Cities.AnyAsync(c => c.Id.Equals(id));
-        }
-
         public async Task<bool> HasAnyItem(int id)
         {
-            return await Context.Cities.AnyAsync(c => c.Id.Equals(id));
+            return await Task.Run(() => Context.Cities.Any(c => c.Id == id));
         }
     }
 }

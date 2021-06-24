@@ -29,10 +29,13 @@ namespace CrowdfundingPlatform.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CityDTO>> Get(int id)
         {
-            if (!_service.HasAnyItem(id))
+            CityDTO city = _service.ReadById(id).Result;
+
+            if (city == null)
             {
                 return NotFound();
             }
+
             return Ok(await _service.ReadById(id));
         }
 
@@ -52,10 +55,6 @@ namespace CrowdfundingPlatform.Controllers
         {
             if (city == null)
             {
-                return BadRequest();
-            }
-            if (!_service.HasAnyItem(city.Id))
-            {
                 return NotFound();
             }
             await _service.Update(city);
@@ -65,12 +64,11 @@ namespace CrowdfundingPlatform.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<CityDTO>> Delete(int id)
         {
-            CityDTO city = null;
-            if (_service.HasAnyItem(id))
+            CityDTO city = await _service.DeleteById(id);
+            if (city == null)
             {
-                city = _service.ReadById(id).Result;
+                return NotFound();
             }
-            await _service.DeleteById(id);
             return Ok(city);
         }
     }
