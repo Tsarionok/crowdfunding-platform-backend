@@ -139,17 +139,14 @@ namespace BusinessLogicLayer.Service.Implementation
 
                 City city = null;
                 CityDTO createdCity = null;
-                if (!(readUser.City == null))
-                {
-                    city = _unitOfWork.Cities.ReadById(readUser.City.Id).Result;
+                city = _unitOfWork.Cities.ReadById(readUser.CityId).Result;
 
-                    createdCity = new CityDTO()
-                    {
-                        Id = city.Id,
-                        Name = city.Name,
-                        Country = new CountryService(_unitOfWork).ReadById(city.Country.Id).Result
-                    };
-                }
+                createdCity = new CityDTO()
+                {
+                    Id = city.Id,
+                    Name = city.Name,
+                    Country = new CountryService(_unitOfWork).ReadById(city.CountryId).Result
+                };
      
                 users.Add(new UserDTO
                 {

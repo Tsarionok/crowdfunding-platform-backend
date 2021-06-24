@@ -27,7 +27,19 @@ namespace CrowdfundingPlatform.Controllers
         [HttpGet]
         public async Task<ActionResult<ICollection<UserModel>>> Get()
         {
-            return NotFound();
+            Mapper mapper = new Mapper(new MapperConfiguration(
+                    cfg => cfg.CreateMap<UserDTO, UserModel>()
+                        .ForMember(dest => dest.City, opt => opt.MapFrom(source =>
+                            new Mapper(new MapperConfiguration(
+                                cfg => cfg.CreateMap<CityDTO, CityWithCountryModel>()
+                                    .ForMember(dest => dest.Country, opt => opt.MapFrom(source =>
+                                        new Mapper(new MapperConfiguration(
+                                                cfg => cfg.CreateMap<CountryDTO, CountryModel>()
+                                            )).Map<CountryModel>(source.Country)
+                                        ))
+                            )).Map<CityWithCountryModel>(source.City)))
+                ));
+            return Ok(mapper.Map<List<UserModel>>(await _userService.ReadAll()));
         }
 
         [HttpGet("{id}")]
