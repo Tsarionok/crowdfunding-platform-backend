@@ -2,8 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using BusinessLogicLayer.DTO;
 using BusinessLogicLayer.Service;
+using BusinessLogicLayer.Service.Implementation;
+using CrowdfundingPlatform.Models;
+using CrowdfundingPlatform.Models.City;
+using CrowdfundingPlatform.Models.Country;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +18,7 @@ namespace CrowdfundingPlatform.Controllers
     [ApiController]
     public class CountriesController : ControllerBase
     {
+        // TODO: Include automapper
         ICountryService _service;
 
         public CountriesController(ICountryService service)
@@ -21,56 +27,90 @@ namespace CrowdfundingPlatform.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CountryDTO>>> Get()
+        public async Task<ActionResult<ICollection<CountryWithCitiesModel>>> Get()
         {
-            return Ok(await _service.ReadAll());
+            ICollection<CountryWithCitiesModel> countries = new List<CountryWithCitiesModel>();
+
+            foreach (CountryDTO readableCountry in await _service.ReadAll())
+            {
+                ICollection<CityModel> cities = new List<CityModel>();
+
+                foreach(CityDTO city in readableCountry.Cities)
+                {
+                    cities.Add(new CityModel
+                    {
+                        Id = city.Id,
+                        Name = city.Name
+                    });
+                }
+                countries.Add(new CountryWithCitiesModel
+                {
+                    Id = readableCountry.Id,
+                    Name = readableCountry.Name,
+                    Cities = cities
+                });
+            }
+            return Ok(countries);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<CountryDTO>> Get(int id)
+        public async Task<ActionResult<CountryWithCitiesModel>> Get(int id)
         {
-            if (!_service.HasAnyItem(id))
+            CountryDTO readableCountry = await _service.ReadById(id);
+
+            ICollection<CityModel> cities = new List<CityModel>();
+
+            foreach (CityDTO city in readableCountry.Cities)
             {
-                return NotFound();
+                cities.Add(new CityModel
+                {
+                    Id = city.Id,
+                    Name = city.Name
+                });
             }
-            return Ok(await _service.ReadById(id));
+
+            return Ok(new CountryWithCitiesModel
+            {
+                Id = readableCountry.Id,
+                Name = readableCountry.Name,
+                Cities = cities
+            });
         }
 
         [HttpPost]
-        public async Task<ActionResult<CountryDTO>> Post(CountryWithCitiesDTO country)
+        public async Task<ActionResult> Post(OnlyNameModel model)
         {
-            if (country == null)
+            if (model == null || model.Name == "")
             {
                 return BadRequest();
             }
-            await _service.Create(country);
-            return Ok(country);
+            await _service.Create(new CountryDTO
+            {
+                Name = model.Name
+            });
+
+            return Ok();
         }
 
         [HttpPut]
-        public async Task<ActionResult> Put(CountryWithCitiesDTO country)
+        public async Task<ActionResult> Put(CountryModel country)
         {
             if (country == null)
             {
-                return BadRequest();
-            }
-            if (!_service.HasAnyItem(country.Id))
-            {
                 return NotFound();
             }
-            await _service.Update(country);
+            await _service.Update(new CountryDTO
+            {
+                Id = country.Id,
+                Name = country.Name
+            });
             return Ok();
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<CountryDTO>> Delete(int id)
         {
-            CountryDTO country = null;
-            if (_service.HasAnyItem(id))
-            {
-                country = _service.ReadById(id).Result;
-            }
-            await _service.DeleteById(id);
+            CountryDTO country = await _service.DeleteById(id);
             return Ok(country);
         }
     }

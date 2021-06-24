@@ -7,7 +7,7 @@ using BusinessLogicLayer.DTO;
 
 namespace BusinessLogicLayer.Service
 {
-    public interface ICountryService : ICrudService<CountryWithCitiesDTO>, IExistenceService
+    public interface ICountryService : ICrudService<CountryDTO>
     {
         
     }
