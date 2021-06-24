@@ -108,10 +108,14 @@ namespace CrowdfundingPlatform.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<CountryDTO>> Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             CountryDTO country = await _service.DeleteById(id);
-            return Ok(country);
+            if (country == null)
+            {
+                return NotFound();
+            }
+            return Ok();
         }
     }
 }
