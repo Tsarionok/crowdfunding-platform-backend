@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using CrowdfundingPlatform.Models.City;
 
-namespace DataAccessLayer.Entity
+namespace CrowdfundingPlatform.Models.User
 {
-    public class User : BaseEntity
+    public class UserModel : BaseModel
     {
         public string Email { get; set; }
 
@@ -22,12 +22,8 @@ namespace DataAccessLayer.Entity
 
         public string Phone { get; set; }
 
-        public string EncryptedPassword { get; set; }
-
         public bool IsTwoFactorAuthenticationEnabled { get; set; }
 
-        public int CityId { get; set; }
-
-        public City City { get; set; }
+        public CityWithCountryModel City { get; set; }
     }
 }

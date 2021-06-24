@@ -56,7 +56,7 @@ namespace BusinessLogicLayer.Service.Implementation
                 Phone = user.Phone,
                 Sex = sex,
                 BirthDate = user.BirthDate,
-                CityId = createdCity,
+                City = createdCity,
                 EncryptedPassword = user.EncryptedPassword,
                 IsTwoFactorAuthenticationEnabled = user.IsTwoFactorAuthenticationEnabled
             };
@@ -86,7 +86,7 @@ namespace BusinessLogicLayer.Service.Implementation
                     }
             }
 
-            City city = _unitOfWork.Cities.ReadById(user.CityId.Id).Result;
+            City city = _unitOfWork.Cities.ReadById(user.City.Id).Result;
 
             CityDTO createdCity = new CityDTO()
             {
@@ -137,15 +137,20 @@ namespace BusinessLogicLayer.Service.Implementation
                         }
                 }
 
-                City city = _unitOfWork.Cities.ReadById(readUser.CityId.Id).Result;
-
-                CityDTO createdCity = new CityDTO()
+                City city = null;
+                CityDTO createdCity = null;
+                if (!(readUser.City == null))
                 {
-                    Id = city.Id,
-                    Name = city.Name,
-                    Country = new CountryService(_unitOfWork).ReadById(city.Country.Id).Result
-                };
+                    city = _unitOfWork.Cities.ReadById(readUser.City.Id).Result;
 
+                    createdCity = new CityDTO()
+                    {
+                        Id = city.Id,
+                        Name = city.Name,
+                        Country = new CountryService(_unitOfWork).ReadById(city.Country.Id).Result
+                    };
+                }
+     
                 users.Add(new UserDTO
                 {
                     Id = readUser.Id,
@@ -188,13 +193,13 @@ namespace BusinessLogicLayer.Service.Implementation
                     }
             }
 
-            City city = _unitOfWork.Cities.ReadById(user.CityId.Id).Result;
+            City city = _unitOfWork.Cities.ReadById(user.CityId).Result;
 
             CityDTO createdCity = new CityDTO()
             {
                 Id = city.Id,
                 Name = city.Name,
-                Country = new CountryService(_unitOfWork).ReadById(city.Country.Id).Result
+                Country = new CountryService(_unitOfWork).ReadById(city.CountryId).Result
             };
 
             return Task.Run(() => new UserDTO
@@ -255,7 +260,7 @@ namespace BusinessLogicLayer.Service.Implementation
                 Phone = user.Phone,
                 Sex = sex,
                 BirthDate = user.BirthDate,
-                CityId = updatedCity,
+                City = updatedCity,
                 EncryptedPassword = user.EncryptedPassword,
                 IsTwoFactorAuthenticationEnabled = user.IsTwoFactorAuthenticationEnabled
             };

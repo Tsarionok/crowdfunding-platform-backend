@@ -34,7 +34,7 @@ namespace DataAccessLayer.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Country>(e => e.HasIndex(c => c.Name).IsUnique());
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
