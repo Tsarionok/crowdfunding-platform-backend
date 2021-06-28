@@ -18,15 +18,15 @@ namespace DataAccessLayer.Entity
 
         public DateTime BirthDate { get; set; }
 
-        public Sex Sex { get; set; }
+        public Sex? Sex { get; set; }
 
         public string Phone { get; set; }
 
         public string EncryptedPassword { get; set; }
 
-        public bool IsTwoFactorAuthenticationEnabled { get; set; }
+        public bool IsTwoFactorAuthenticationEnabled { get; set; } = false;
 
-        public int CityId { get; set; }
+        public int? CityId { get; set; }
 
         public City City { get; set; }
     }

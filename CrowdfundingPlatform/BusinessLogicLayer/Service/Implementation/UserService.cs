@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using BusinessLogicLayer.DTO;
 using DataAccessLayer.Context;
 using DataAccessLayer.Entity;
@@ -17,49 +18,20 @@ namespace BusinessLogicLayer.Service.Implementation
 
         public async Task Create(UserDTO user)
         {
-            DataAccessLayer.Entity.Sex sex;
-            switch (user.Sex)
-            {
-                case DTO.Sex.Man:
-                    {
-                        sex = DataAccessLayer.Entity.Sex.Man;
-                        break;
-                    }
-                case DTO.Sex.Woman:
-                    {
-                        sex = DataAccessLayer.Entity.Sex.Woman;
-                        break;
-                    }
-                default:
-                    {
-                        sex = DataAccessLayer.Entity.Sex.Undefined;
-                        break;
-                    }
-            }
+            User createdUser = new Mapper(new MapperConfiguration(
+                cfg => cfg.CreateMap<UserDTO, User>()
+                    .ForMember(dest => dest.CityId, opt => opt.MapFrom(source => source.City.Id))
+                    .ForMember(dest => dest.City, opt => opt.MapFrom(source =>
+                            new Mapper(new MapperConfiguration(
+                                cfg => cfg.CreateMap<CityDTO, City>()
+                                    .ForMember(dest => dest.Country, opt => opt.MapFrom(source =>
+                                        new Mapper(new MapperConfiguration(
+                                                cfg => cfg.CreateMap<CountryDTO, Country>()
+                                            )).Map<Country>(source.Country)
+                                        ))
+                            )).Map<City>(source.City)))
+                )).Map<User>(user);
 
-            CityDTO city = new CityService(_unitOfWork).ReadById(user.City.Id).Result;
-
-            City createdCity = new City()
-            {
-                Id = city.Id,
-                Name = city.Name,
-                CountryId = city.Country.Id,
-                Country = _unitOfWork.Countries.ReadById(city.Country.Id).Result
-            };
-
-            User createdUser = new User
-            {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Avatar = user.Avatar,
-                Email = user.Email,
-                Phone = user.Phone,
-                Sex = sex,
-                BirthDate = user.BirthDate,
-                City = createdCity,
-                EncryptedPassword = user.EncryptedPassword,
-                IsTwoFactorAuthenticationEnabled = user.IsTwoFactorAuthenticationEnabled
-            };
             await _unitOfWork.Users.Create(createdUser);
         }
 
@@ -114,105 +86,39 @@ namespace BusinessLogicLayer.Service.Implementation
 
         public async Task<ICollection<UserDTO>> ReadAll()
         {
-            ICollection<UserDTO> users = new List<UserDTO>();
-            foreach (User readUser in _unitOfWork.Users.ReadAll().Result)
-            {
-                DTO.Sex sex;
-                switch (readUser.Sex)
-                {
-                    case DataAccessLayer.Entity.Sex.Man:
-                        {
-                            sex = DTO.Sex.Man;
-                            break;
-                        }
-                    case DataAccessLayer.Entity.Sex.Woman:
-                        {
-                            sex = DTO.Sex.Woman;
-                            break;
-                        }
-                    default:
-                        {
-                            sex = DTO.Sex.Undefined;
-                            break;
-                        }
-                }
-
-                City city = null;
-                CityDTO createdCity = null;
-                city = _unitOfWork.Cities.ReadById(readUser.CityId).Result;
-
-                createdCity = new CityDTO()
-                {
-                    Id = city.Id,
-                    Name = city.Name,
-                    Country = new CountryService(_unitOfWork).ReadById(city.CountryId).Result
-                };
-     
-                users.Add(new UserDTO
-                {
-                    Id = readUser.Id,
-                    FirstName = readUser.FirstName,
-                    LastName = readUser.LastName,
-                    Avatar = readUser.Avatar,
-                    Email = readUser.Email,
-                    Phone = readUser.Phone,
-                    Sex = sex,
-                    BirthDate = readUser.BirthDate,
-                    City = createdCity,
-                    EncryptedPassword = readUser.EncryptedPassword,
-                    IsTwoFactorAuthenticationEnabled = readUser.IsTwoFactorAuthenticationEnabled
-                });
-            }
+            ICollection<UserDTO> users = new Mapper(new MapperConfiguration(
+                cfg => cfg.CreateMap<User, UserDTO>()
+                    .ForMember(dest => dest.City, opt => opt.MapFrom(source =>
+                            new Mapper(new MapperConfiguration(
+                                cfg => cfg.CreateMap<City, CityDTO>()
+                                    .ForMember(dest => dest.Country, opt => opt.MapFrom(source =>
+                                        new Mapper(new MapperConfiguration(
+                                                cfg => cfg.CreateMap<Country, CountryDTO>()
+                                                    .ForMember(dest => dest.Cities, opt => opt.Ignore())
+                                            )).Map<CountryDTO>(source.Country)
+                                        ))
+                            )).Map<CityDTO>(source.City)))
+                )).Map<List<UserDTO>>(await _unitOfWork.Users.ReadAll());
 
             return await Task.Run(() => users);
         }
 
-        public Task<UserDTO> ReadById(int id)
+        public async Task<UserDTO> ReadById(int id)
         {
-            User user = _unitOfWork.Users.ReadById(id).Result;
-            DTO.Sex sex;
-            switch (user.Sex)
-            {
-                case DataAccessLayer.Entity.Sex.Man:
-                    {
-                        sex = DTO.Sex.Man;
-                        break;
-                    }
-                case DataAccessLayer.Entity.Sex.Woman:
-                    {
-                        sex = DTO.Sex.Woman;
-                        break;
-                    }
-                default:
-                    {
-                        sex = DTO.Sex.Undefined;
-                        break;
-                    }
-            }
-
-            City city = _unitOfWork.Cities.ReadById(user.CityId).Result;
-
-            CityDTO createdCity = new CityDTO()
-            {
-                Id = city.Id,
-                Name = city.Name,
-                Country = new CountryService(_unitOfWork).ReadById(city.CountryId).Result
-            };
-
-            return Task.Run(() => new UserDTO
-            {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Avatar = user.Avatar,
-                Email = user.Email,
-                Phone = user.Phone,
-                Sex = sex,
-                BirthDate = user.BirthDate,
-                City = createdCity,
-                EncryptedPassword = user.EncryptedPassword,
-                IsTwoFactorAuthenticationEnabled = user.IsTwoFactorAuthenticationEnabled
-            });
+            UserDTO user = new Mapper(new MapperConfiguration(
+                cfg => cfg.CreateMap<User, UserDTO>()
+                    .ForMember(dest => dest.City, opt => opt.MapFrom(source =>
+                            new Mapper(new MapperConfiguration(
+                                cfg => cfg.CreateMap<City, CityDTO>()
+                                    .ForMember(dest => dest.Country, opt => opt.MapFrom(source =>
+                                        new Mapper(new MapperConfiguration(
+                                                cfg => cfg.CreateMap<Country, CountryDTO>()
+                                                    .ForMember(dest => dest.Cities, opt => opt.Ignore())
+                                            )).Map<CountryDTO>(source.Country)
+                                        ))
+                            )).Map<CityDTO>(source.City)))
+                )).Map<UserDTO>(await _unitOfWork.Users.ReadById(id));
+            return await Task.Run(() => user);
         }
 
         public async Task Update(UserDTO user)

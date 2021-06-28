@@ -37,12 +37,16 @@ namespace DataAccessLayer.Repository.Implementation
 
         public async Task<ICollection<User>> ReadAll()
         {
-            return await Context.Users.ToListAsync();
+            return await Context.Users
+                .Include(u => u.City.Country)
+                .ToListAsync();
         }
 
         public async Task<User> ReadById(int id)
         {
-            return await Context.Users.Where(c => c.Id.Equals(id)).FirstAsync();
+            return await Context.Users.Where(c => c.Id.Equals(id))
+                .Include(u => u.City.Country)
+                .FirstAsync();
         }
 
         public async Task Update(User user)

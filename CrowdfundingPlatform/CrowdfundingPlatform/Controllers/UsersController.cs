@@ -61,9 +61,12 @@ namespace CrowdfundingPlatform.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(UserLoginModel user)
+        public async Task<ActionResult> Post(UserRegistrationModel user)
         {
-            return NotFound();
+            await _userService.Create(new Mapper(new MapperConfiguration(
+                cfg => cfg.CreateMap<UserRegistrationModel, UserDTO>()
+                )).Map<UserDTO>(user));
+            return Ok();
         }
 
         [HttpPut]

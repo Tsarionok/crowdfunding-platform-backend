@@ -18,13 +18,13 @@ namespace BusinessLogicLayer.DTO
 
         public DateTime BirthDate { get; set; }
 
-        public Sex Sex { get; set; }
+        public Sex? Sex { get; set; }
 
         public string Phone { get; set; }
 
         public string EncryptedPassword { get; set; }
 
-        public bool IsTwoFactorAuthenticationEnabled { get; set; }
+        public bool IsTwoFactorAuthenticationEnabled { get; set; } = false;
 
         public CityDTO City { get; set; }
     }
