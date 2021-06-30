@@ -37,50 +37,19 @@ namespace BusinessLogicLayer.Service.Implementation
 
         public async Task<UserDTO> DeleteById(int id)
         {
-            User user = _unitOfWork.Users.DeleteById(id).Result;
-            DTO.Sex sex;
-            switch (user.Sex)
-            {
-                case DataAccessLayer.Entity.Sex.Man:
-                    {
-                        sex = DTO.Sex.Man;
-                        break;
-                    }
-                case DataAccessLayer.Entity.Sex.Woman:
-                    {
-                        sex = DTO.Sex.Woman;
-                        break;
-                    }
-                default:
-                    {
-                        sex = DTO.Sex.Undefined;
-                        break;
-                    }
-            }
-
-            City city = _unitOfWork.Cities.ReadById(user.City.Id).Result;
-
-            CityDTO createdCity = new CityDTO()
-            {
-                Id = city.Id,
-                Name = city.Name,
-                Country = new CountryService(_unitOfWork).ReadById(city.Country.Id).Result
-            };
-
-            UserDTO deletedUser = new UserDTO
-            {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Avatar = user.Avatar,
-                Email = user.Email,
-                Phone = user.Phone,
-                Sex = sex,
-                BirthDate = user.BirthDate,
-                City = createdCity,
-                EncryptedPassword = user.EncryptedPassword,
-                IsTwoFactorAuthenticationEnabled = user.IsTwoFactorAuthenticationEnabled
-            };
+            UserDTO deletedUser = new Mapper(new MapperConfiguration(
+                    cfg => cfg.CreateMap<User, UserDTO>()
+                    .ForMember(dest => dest.City, opt => opt.MapFrom(source =>
+                            new Mapper(new MapperConfiguration(
+                                cfg => cfg.CreateMap<City, CityDTO>()
+                                    .ForMember(dest => dest.Country, opt => opt.MapFrom(source =>
+                                        new Mapper(new MapperConfiguration(
+                                                cfg => cfg.CreateMap<Country, CountryDTO>()
+                                                    .ForMember(dest => dest.Cities, opt => opt.Ignore())
+                                            )).Map<CountryDTO>(source.Country)
+                                        ))
+                            )).Map<CityDTO>(source.City)))
+                )).Map<UserDTO>(await _unitOfWork.Users.DeleteById(id));
             return await Task.Run(() => deletedUser);
         }
 

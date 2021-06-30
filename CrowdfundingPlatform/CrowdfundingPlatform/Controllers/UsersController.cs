@@ -18,10 +18,12 @@ namespace CrowdfundingPlatform.Controllers
     public class UsersController : ControllerBase
     {
         IUserService _userService;
+        ICityService _cityService;
 
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, ICityService cityService)
         {
             _userService = userService;
+            _cityService = cityService;
         }
 
         [HttpGet]
@@ -69,8 +71,21 @@ namespace CrowdfundingPlatform.Controllers
             return Ok();
         }
 
-        [HttpPut]
-        public async Task<ActionResult> Put(UserLoginModel user)
+        // TODO: fix edit endpoint
+        [HttpPut("edit")]
+        public async Task<ActionResult> Put(UserEditModel user)
+        {
+            await _userService.Update(new Mapper(new MapperConfiguration(
+                        cfg => cfg.CreateMap<UserEditModel, UserDTO>()
+                            .ForMember(dest => dest.City, opt => opt.MapFrom(source => _cityService.ReadById(source.CityId)))
+                            .ForMember(dest => dest.Avatar, opt => opt.Ignore())
+                    )).Map<UserDTO>(user)
+                );
+            return Ok();
+        }
+
+        [HttpPut("changePass")]
+        public async Task<ActionResult> Put(UserChangePasswordModel user)
         {
             return NotFound();
         }
@@ -78,7 +93,8 @@ namespace CrowdfundingPlatform.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            return NotFound();
+            await _userService.DeleteById(id);
+            return Ok();
         }
     }
 }
