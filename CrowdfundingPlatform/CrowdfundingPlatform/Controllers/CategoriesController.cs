@@ -52,7 +52,7 @@ namespace CrowdfundingPlatform.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(OnlyNameModel model)
+        public async Task<ActionResult> Post(CategoryCreateModel model)
         {
             if (model == null || model.Name == "")
             {

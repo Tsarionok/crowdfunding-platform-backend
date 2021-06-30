@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CrowdfundingPlatform.Models
+namespace CrowdfundingPlatform.Models.Country
 {
-    public class OnlyNameModel
+    public class CountryCreateModel
     {
         public string Name { get; set; }
     }
