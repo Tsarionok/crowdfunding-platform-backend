@@ -37,12 +37,17 @@ namespace DataAccessLayer.Repository.Implementation
 
         public async Task<ICollection<Photo>> ReadAll()
         {
-            return await Context.Photos.ToListAsync();
+            return await Context.Photos
+                .Include(p => p.Project)
+                .ToListAsync();
         }
 
         public async Task<Photo> ReadById(int id)
         {
-            return await Context.Photos.Where(c => c.Id.Equals(id)).FirstAsync();
+            return await Context.Photos
+                .Where(c => c.Id.Equals(id))
+                .Include(p => p.Project)
+                .FirstAsync();
         }
 
         public async Task Update(Photo photo)

@@ -38,6 +38,7 @@ namespace CrowdfundingPlatform
             services.AddTransient<ICityService, CityService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<IPhotoService, PhotoService>();
             services.AddDbContext<CrowdfundingDbContext>(a => a.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddSwaggerGen(c =>
             {

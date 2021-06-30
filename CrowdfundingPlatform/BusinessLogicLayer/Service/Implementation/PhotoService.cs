@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using BusinessLogicLayer.DTO;
 using DataAccessLayer.Context;
 using DataAccessLayer.Entity;
@@ -39,16 +40,18 @@ namespace BusinessLogicLayer.Service.Implementation
 
         public async Task<ICollection<PhotoDTO>> ReadAll()
         {
-            ICollection<PhotoDTO> photos = new List<PhotoDTO>();
-
-            foreach (Photo readablePhoto in _unitOfWork.Photos.ReadAll().Result)
-            {
-                photos.Add(new PhotoDTO {
-                    Id = readablePhoto.Id,
-                    Image = readablePhoto.Image,
-                    Project = new ProjectService(_unitOfWork).ReadById(readablePhoto.Project.Id).Result
-                });
-            }
+            ICollection<PhotoDTO> photos = new Mapper(new MapperConfiguration(
+                    cfg => cfg.CreateMap<Photo, PhotoDTO>()
+                        .ForMember(dest => dest.Project, opt => opt.MapFrom(
+                                source => new Mapper(new MapperConfiguration(
+                                        cfg => cfg.CreateMap<Project, ProjectDTO>()
+                                        .ForMember(dest => dest.Id, opt => opt.MapFrom(
+                                                source => source.Id
+                                            ))
+                                        .ForAllOtherMembers(dest => dest.Ignore())
+                                    )).Map<ProjectDTO>(source.Project)
+                            ))
+                )).Map<List<PhotoDTO>>(await _unitOfWork.Photos.ReadAll());
             return await Task.Run(() => photos);
         }
 
