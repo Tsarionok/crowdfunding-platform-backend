@@ -17,10 +17,12 @@ namespace CrowdfundingPlatform.Controllers
     public class ProjectsController : ControllerBase
     {
         IProjectService _projectService;
+        ICategoryService _categoryService;
 
-        public ProjectsController(IProjectService projectService)
+        public ProjectsController(IProjectService projectService, ICategoryService categoryService)
         {
             _projectService = projectService;
+            _categoryService = categoryService;
         }
 
         [HttpGet]
@@ -51,22 +53,37 @@ namespace CrowdfundingPlatform.Controllers
             return Ok(mapper.Map<ProjectModel>(await _projectService.ReadById(id)));
         }
 
+
+        // TODO: fix adding project
         [HttpPost]
         public async Task<ActionResult> Post(ProjectCreateModel project)
         {
-            return NotFound();
+            await _projectService.Create(new Mapper(new MapperConfiguration(
+                cfg => cfg.CreateMap<ProjectCreateModel, ProjectDTO>()
+                    .ForMember(dest => dest.Category, opt => opt.MapFrom(
+                            source => _categoryService.ReadById(source.CategoryId).Result
+                        ))
+                    .ForMember(dest => dest.MainPhoto, opt => opt.Ignore())
+                )).Map<ProjectDTO>(project));
+            return Ok();
         }
 
+        // TODO: fix editing project
         [HttpPut]
         public async Task<ActionResult> Put(ProjectUpdateModel project)
         {
-            return NotFound();
+            await _projectService.Update(new Mapper(new MapperConfiguration(
+                        cfg => cfg.CreateMap<ProjectUpdateModel, ProjectDTO>()
+                    )).Map<ProjectDTO>(project)
+                );
+            return Ok();
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            return NotFound();
+            await _projectService.DeleteById(id);
+            return Ok();
         }
     }
 }

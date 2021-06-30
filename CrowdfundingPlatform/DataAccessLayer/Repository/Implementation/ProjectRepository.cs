@@ -36,12 +36,17 @@ namespace DataAccessLayer.Repository.Implementation
 
         public async Task<ICollection<Project>> ReadAll()
         {
-            return await Context.Projects.ToListAsync();
+            return await Context.Projects
+                .Include(p => p.Category)
+                .ToListAsync();
         }
 
         public async Task<Project> ReadById(int id)
         {
-            return await Context.Projects.Where(p => p.Id.Equals(id)).FirstAsync();
+            return await Context.Projects
+                .Where(p => p.Id.Equals(id))
+                .Include(p => p.Category)
+                .FirstAsync();
         }
 
         public async Task Update(Project project)

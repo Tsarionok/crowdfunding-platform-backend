@@ -4,14 +4,16 @@ using DataAccessLayer.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(CrowdfundingDbContext))]
-    partial class CrowdfundingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210630120104_AddCategerIdAtProject")]
+    partial class AddCategerIdAtProject
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -308,7 +310,7 @@ namespace DataAccessLayer.Migrations
             modelBuilder.Entity("DataAccessLayer.Entity.Project", b =>
                 {
                     b.HasOne("DataAccessLayer.Entity.Category", "Category")
-                        .WithMany("Projects")
+                        .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -338,11 +340,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Project");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DataAccessLayer.Entity.Category", b =>
-                {
-                    b.Navigation("Projects");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entity.Country", b =>

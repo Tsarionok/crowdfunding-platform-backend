@@ -34,7 +34,7 @@ namespace CrowdfundingPlatform
             services.AddControllers();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ICountryService, CountryService>();
-            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddTransient<ICategoryService, CategoryService>();
             services.AddTransient<ICityService, CityService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IProjectService, ProjectService>();

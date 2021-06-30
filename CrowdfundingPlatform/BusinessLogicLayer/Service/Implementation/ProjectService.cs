@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using BusinessLogicLayer.DTO;
 using DataAccessLayer.Context;
 using DataAccessLayer.Entity;
@@ -17,51 +18,28 @@ namespace BusinessLogicLayer.Service.Implementation
 
         public async Task Create(ProjectDTO project)
         {
-            CategoryDTO category = project.Category;
-            Category createdCategory = new Category
-            {
-                Id = category.Id,
-                Name = category.Name
-            };
-
-            Project createdProject = new Project
-            {
-                Name = project.Name,
-                Description = project.Description,
-                StartFundraisingDate = project.StartFundraisingDate,
-                FinalFundraisingDate = project.FinalFundraisingDate,
-                CurrentDonationSum = project.CurrentDonationSum,
-                TotalDonationSum = project.TotalDonationSum,
-                Category = createdCategory,
-                MainPhoto = project.MainPhoto
-            };
-
+            Project createdProject = new Mapper(new MapperConfiguration(
+                    cfg => cfg.CreateMap<ProjectDTO, Project>()
+                        .ForMember(dest => dest.Category, opt => opt.MapFrom(
+                                source => new Mapper(new MapperConfiguration(
+                                        cfg => cfg.CreateMap<CategoryDTO, Category>()
+                                            .ForMember(dest => dest.Projects, opt => opt.Ignore())
+                                    )).Map<Category>(source.Category)
+                            ))
+                )).Map<Project>(project);
             await _unitOfWork.Projects.Create(createdProject);
         }
 
         public async Task<ProjectDTO> DeleteById(int id)
         {
-            Project project = _unitOfWork.Projects.DeleteById(id).Result;
-
-            Category category = project.Category;
-            CategoryDTO createdCategory = new CategoryDTO
-            {
-                Id = category.Id,
-                Name = category.Name
-            };
-
-            ProjectDTO deletedProject = new ProjectDTO
-            {
-                Id = project.Id,
-                Name = project.Name,
-                Description = project.Description,
-                StartFundraisingDate = project.StartFundraisingDate,
-                FinalFundraisingDate = project.FinalFundraisingDate,
-                CurrentDonationSum = project.CurrentDonationSum,
-                TotalDonationSum = project.TotalDonationSum,
-                Category = createdCategory,
-                MainPhoto = project.MainPhoto
-            };
+            ProjectDTO deletedProject = new Mapper(new MapperConfiguration(
+                    cfg => cfg.CreateMap<Project, ProjectDTO>()
+                        .ForMember(dest => dest.Category, opt => opt.MapFrom(
+                                source => new Mapper(new MapperConfiguration(
+                                        cfg => cfg.CreateMap<Category, CategoryDTO>()
+                                    )).Map<CategoryDTO>(source.Category) 
+                            ))
+                )).Map<ProjectDTO>(await _unitOfWork.Projects.DeleteById(id));
             return await Task.Run(() => deletedProject);
         }
 
@@ -71,11 +49,10 @@ namespace BusinessLogicLayer.Service.Implementation
 
             foreach (Project readableProject in _unitOfWork.Projects.ReadAll().Result)
             {
-                Category category = readableProject.Category;
                 CategoryDTO createdCategory = new CategoryDTO
                 {
-                    Id = category.Id,
-                    Name = category.Name
+                    Id = readableProject.CategoryId,
+                    Name = readableProject.Category.Name
                 };
 
                 projects.Add(new ProjectDTO {
@@ -121,26 +98,15 @@ namespace BusinessLogicLayer.Service.Implementation
 
         public async Task Update(ProjectDTO project)
         {
-            CategoryDTO category = project.Category;
-            Category updatedCategory = new Category
-            {
-                Id = category.Id,
-                Name = category.Name
-            };
-
-            Project updatedProject = new Project
-            {
-                Id = project.Id,
-                Name = project.Name,
-                Description = project.Description,
-                StartFundraisingDate = project.StartFundraisingDate,
-                FinalFundraisingDate = project.FinalFundraisingDate,
-                CurrentDonationSum = project.CurrentDonationSum,
-                TotalDonationSum = project.TotalDonationSum,
-                Category = updatedCategory,
-                MainPhoto = project.MainPhoto
-            };
-
+            Project updatedProject = new Mapper(new MapperConfiguration(
+                    cfg => cfg.CreateMap<ProjectDTO, Project>()
+                        .ForMember(dest => dest.Category, opt => opt.MapFrom(
+                                source => new Mapper(new MapperConfiguration(
+                                        cfg => cfg.CreateMap<CategoryDTO, Category>()
+                                        .ForMember(dest => dest.Projects, opt => opt.Ignore())
+                                    )).Map<Category>(source.Category)
+                            ))
+                )).Map<Project>(project);
             await _unitOfWork.Projects.Update(updatedProject);
         }
     }
