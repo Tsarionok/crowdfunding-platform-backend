@@ -18,24 +18,32 @@ namespace BusinessLogicLayer.Service.Implementation
 
         public async Task Create(PhotoDTO photo)
         {
-            await _unitOfWork.Photos.Create(new Photo
-            {
-                Image = photo.Image,
-                Project = _unitOfWork.Projects.ReadById(photo.Project.Id).Result
-            });
+            await _unitOfWork.Photos.Create(new Mapper(
+                    new MapperConfiguration(
+                        cfg => cfg.CreateMap<PhotoDTO, Photo>()
+                            .ForMember(dest => dest.Project, opt => opt.MapFrom(
+                                    source => new Mapper(new MapperConfiguration(
+                                            cfg => cfg.CreateMap<ProjectDTO, Project>()
+                                                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(
+                                                        source => source.Category.Id
+                                                    ))
+                                                .ForMember(dest => dest.Category, opt => opt.MapFrom(
+                                                        source => new Mapper(new MapperConfiguration(
+                                                                cfg => cfg.CreateMap<CategoryDTO, Category>()
+                                                                    .ForMember(dest => dest.Projects, opt => opt.Ignore())
+                                                            )).Map<Category>(source.Category)
+                                                    ))
+                                        )).Map<Project>(source.Project)
+                                ))
+                )).Map<Photo>(photo));
         }
 
         public async Task<PhotoDTO> DeleteById(int id)
         {
-            Photo deletedPhoto = _unitOfWork.Photos.DeleteById(id).Result;
-            PhotoDTO photo = new PhotoDTO
-            {
-                Id = deletedPhoto.Id,
-                Image = deletedPhoto.Image,
-                Project = new ProjectService(_unitOfWork).ReadById(deletedPhoto.Project.Id).Result
-            };
-
-            return await Task.Run(() => photo);
+            return new Mapper(new MapperConfiguration(
+                    cfg => cfg.CreateMap<Photo, PhotoDTO>()
+                        .ForMember(dest => dest.Project, opt => opt.Ignore())
+                )).Map<PhotoDTO>(await _unitOfWork.Photos.DeleteById(id));
         }
 
         public async Task<ICollection<PhotoDTO>> ReadAll()
