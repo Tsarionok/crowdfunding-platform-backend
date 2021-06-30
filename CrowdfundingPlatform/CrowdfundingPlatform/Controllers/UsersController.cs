@@ -8,7 +8,9 @@ using BusinessLogicLayer.Service;
 using CrowdfundingPlatform.Models.City;
 using CrowdfundingPlatform.Models.Country;
 using CrowdfundingPlatform.Models.User;
+using DataAccessLayer.Entity;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CrowdfundingPlatform.Controllers
@@ -20,10 +22,19 @@ namespace CrowdfundingPlatform.Controllers
         IUserService _userService;
         ICityService _cityService;
 
-        public UsersController(IUserService userService, ICityService cityService)
+        //TODO: relocate to DAL
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
+
+        public UsersController(IUserService userService, 
+            ICityService cityService,
+            UserManager<User> userManager,
+            SignInManager<User> signInManager)
         {
             _userService = userService;
             _cityService = cityService;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         [HttpGet]
@@ -63,11 +74,40 @@ namespace CrowdfundingPlatform.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(UserRegistrationModel user)
+        public async Task<ActionResult> Register(UserRegistrationModel user)
         {
-            await _userService.Create(new Mapper(new MapperConfiguration(
+            if (ModelState.IsValid)
+            {
+                User registeredUser = new Mapper(new MapperConfiguration(
+                        cfg => cfg.CreateMap<UserRegistrationModel, User>()
+                            .ForMember(dest => dest.UserName, opt => opt.MapFrom(
+                                    source => source.Email
+                                ))
+                            .ForMember(dest => dest.Email, opt => opt.MapFrom(
+                                    source => source.Email
+                                ))
+                            .ForAllOtherMembers(opt => opt.Ignore())
+                    )).Map<User>(user);
+                // добавляем пользователя
+                var result = await _userManager.CreateAsync(registeredUser, user.Password);
+                if (result.Succeeded)
+                {
+                    // установка куки
+                    await _signInManager.SignInAsync(registeredUser, false);
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
+            }
+
+/*            await _userService.Create(new Mapper(new MapperConfiguration(
                 cfg => cfg.CreateMap<UserRegistrationModel, UserDTO>()
-                )).Map<UserDTO>(user));
+                )).Map<UserDTO>(user));*/
             return Ok();
         }
 

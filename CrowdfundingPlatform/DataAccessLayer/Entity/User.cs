@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace DataAccessLayer.Entity
 {
-    public class User : BaseEntity
+    public class User : IdentityUser
     {
-        public string Email { get; set; }
 
         public byte[] Avatar { get; set; }
 
@@ -19,12 +19,6 @@ namespace DataAccessLayer.Entity
         public DateTime BirthDate { get; set; }
 
         public Sex? Sex { get; set; }
-
-        public string Phone { get; set; }
-
-        public string EncryptedPassword { get; set; }
-
-        public bool IsTwoFactorAuthenticationEnabled { get; set; } = false;
 
         public int? CityId { get; set; }
 

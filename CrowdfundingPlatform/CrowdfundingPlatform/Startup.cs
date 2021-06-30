@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using BusinessLogicLayer.Service;
 using BusinessLogicLayer.Service.Implementation;
 using DataAccessLayer.Context;
+using DataAccessLayer.Entity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -40,6 +42,8 @@ namespace CrowdfundingPlatform
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IPhotoService, PhotoService>();
             services.AddDbContext<CrowdfundingDbContext>(a => a.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<CrowdfundingDbContext>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CrowdfundingPlatform", Version = "v1" });
@@ -61,6 +65,7 @@ namespace CrowdfundingPlatform
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {

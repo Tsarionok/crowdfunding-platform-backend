@@ -57,6 +57,15 @@ namespace BusinessLogicLayer.Service.Implementation
         {
             ICollection<UserDTO> users = new Mapper(new MapperConfiguration(
                 cfg => cfg.CreateMap<User, UserDTO>()
+                    .ForMember(dest => dest.Email, opt => opt.MapFrom(
+                            source => source.Email
+                        ))
+                    .ForMember(dest => dest.EncryptedPassword, opt => opt.MapFrom(
+                            source => source.PasswordHash
+                        ))
+                    .ForMember(dest => dest.FirstName, opt => opt.MapFrom(
+                            source => source.UserName
+                        ))
                     .ForMember(dest => dest.City, opt => opt.MapFrom(source =>
                             new Mapper(new MapperConfiguration(
                                 cfg => cfg.CreateMap<City, CityDTO>()
@@ -67,6 +76,7 @@ namespace BusinessLogicLayer.Service.Implementation
                                             )).Map<CountryDTO>(source.Country)
                                         ))
                             )).Map<CityDTO>(source.City)))
+                    .ForAllOtherMembers(opt => opt.Ignore())
                 )).Map<List<UserDTO>>(await _unitOfWork.Users.ReadAll());
 
             return await Task.Run(() => users);
@@ -124,17 +134,14 @@ namespace BusinessLogicLayer.Service.Implementation
 
             User updatedUser = new User
             {
-                Id = user.Id,
+                Id = user.Id.ToString(),
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Avatar = user.Avatar,
                 Email = user.Email,
-                Phone = user.Phone,
                 Sex = sex,
                 BirthDate = user.BirthDate,
-                City = updatedCity,
-                EncryptedPassword = user.EncryptedPassword,
-                IsTwoFactorAuthenticationEnabled = user.IsTwoFactorAuthenticationEnabled
+                City = updatedCity
             };
             await _unitOfWork.Users.Update(updatedUser);
         }

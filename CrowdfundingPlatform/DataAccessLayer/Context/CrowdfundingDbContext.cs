@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataAccessLayer.Entity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer.Context
 {
-    public class CrowdfundingDbContext : DbContext
+    public class CrowdfundingDbContext : IdentityDbContext<User>
     {
         public CrowdfundingDbContext(DbContextOptions<CrowdfundingDbContext> options) : base(options)
         {
@@ -19,8 +20,6 @@ namespace DataAccessLayer.Context
         public DbSet<City> Cities { get; set; }
 
         public DbSet<Category> Categories { get; set; }
-
-        public DbSet<User> Users { get; set; }
 
         public DbSet<Project> Projects { get; set; }
 

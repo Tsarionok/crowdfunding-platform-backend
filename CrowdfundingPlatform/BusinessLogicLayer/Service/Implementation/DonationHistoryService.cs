@@ -35,7 +35,7 @@ namespace BusinessLogicLayer.Service.Implementation
                 Id = deletedDonationHitory.Id,
                 Message = deletedDonationHitory.Message,
                 Project = new ProjectService(_unitOfWork).ReadById(deletedDonationHitory.Project.Id).Result,
-                User = new UserService(_unitOfWork).ReadById(deletedDonationHitory.User.Id).Result
+                User = new UserService(_unitOfWork).ReadById(Int32.Parse(deletedDonationHitory.User.Id)).Result
             });
         }
 
@@ -50,7 +50,7 @@ namespace BusinessLogicLayer.Service.Implementation
                     Id = readableDonationHistory.Id,
                     Message = readableDonationHistory.Message,
                     Project = new ProjectService(_unitOfWork).ReadById(readableDonationHistory.Project.Id).Result,
-                    User = new UserService(_unitOfWork).ReadById(readableDonationHistory.User.Id).Result
+                    User = new UserService(_unitOfWork).ReadById(Int32.Parse(readableDonationHistory.User.Id)).Result
                 });
             }
             return await Task.Run(() => donationHistories);
@@ -65,7 +65,7 @@ namespace BusinessLogicLayer.Service.Implementation
                 Id = readableDonationHistory.Id,
                 Message = readableDonationHistory.Message,
                 Project = new ProjectService(_unitOfWork).ReadById(readableDonationHistory.Project.Id).Result,
-                User = new UserService(_unitOfWork).ReadById(readableDonationHistory.User.Id).Result
+                User = new UserService(_unitOfWork).ReadById(Int32.Parse(readableDonationHistory.User.Id)).Result
             });
         }
 
