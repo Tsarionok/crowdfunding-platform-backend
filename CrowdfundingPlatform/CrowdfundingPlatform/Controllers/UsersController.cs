@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BusinessLogicLayer.DTO;
 using BusinessLogicLayer.Service;
+using BusinessLogicLayer.Service.Implementation;
 using CrowdfundingPlatform.Models.City;
 using CrowdfundingPlatform.Models.Country;
 using CrowdfundingPlatform.Models.User;
 using DataAccessLayer.Entity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +23,7 @@ namespace CrowdfundingPlatform.Controllers
     {
         IUserService _userService;
         ICityService _cityService;
+        IEmailService _emailService;
 
         //TODO: relocate to DAL
         private readonly UserManager<User> _userManager;
@@ -28,11 +31,13 @@ namespace CrowdfundingPlatform.Controllers
 
         public UsersController(IUserService userService, 
             ICityService cityService,
+            IEmailService emailService,
             UserManager<User> userManager,
             SignInManager<User> signInManager)
         {
             _userService = userService;
             _cityService = cityService;
+            _emailService = emailService;
             _userManager = userManager;
             _signInManager = signInManager;
         }
@@ -92,8 +97,16 @@ namespace CrowdfundingPlatform.Controllers
                 var result = await _userManager.CreateAsync(registeredUser, user.Password);
                 if (result.Succeeded)
                 {
-                    await _signInManager.SignInAsync(registeredUser, false);
-                    return Ok();
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(registeredUser);
+                    var callbackUrl = Url.Action(
+                        "ConfirmEmail",
+                        "Users",
+                        new { userId = registeredUser.Id, code = code },
+                        protocol: HttpContext.Request.Scheme);
+                    await _emailService.SendEmailAsync(registeredUser.Email, "Confirm your account",
+                        $"Confirm your registration by following the link: <a href='{callbackUrl}'>link</a>");
+
+                    return Content("To complete registration, check your email and follow the link provided in the letter");
                 }
                 else
                 {
@@ -105,6 +118,35 @@ namespace CrowdfundingPlatform.Controllers
             }
             return BadRequest(ModelState);
         }
+
+        [HttpGet("confirm-email")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string userId, string code)
+        {
+            if (userId == null || code == null)
+            {
+                return BadRequest();
+            }
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+            if (result.Succeeded)
+            {
+                return Ok();
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                return BadRequest(ModelState);
+            }
+        }
+
 
         // TODO: fix edit endpoint
         [HttpPut("edit")]

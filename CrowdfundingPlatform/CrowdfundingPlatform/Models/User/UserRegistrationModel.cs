@@ -8,6 +8,8 @@ namespace CrowdfundingPlatform.Models.User
 {
     public class UserRegistrationModel
     {
+        public string Id { get; }
+
         [Required]
         public string Email { get; set; }
 

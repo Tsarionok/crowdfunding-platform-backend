@@ -48,7 +48,12 @@ namespace CrowdfundingPlatform
                 opts.Password.RequireLowercase = false;
                 opts.Password.RequireUppercase = false;
                 opts.Password.RequireDigit = false;
-            }).AddEntityFrameworkStores<CrowdfundingDbContext>();
+                opts.User.RequireUniqueEmail = true;
+                opts.User.AllowedUserNameCharacters = ".@abcdefghijklmnopqrstuvwxyz";
+            })
+                .AddEntityFrameworkStores<CrowdfundingDbContext>()
+                .AddDefaultTokenProviders();
+            services.AddScoped<IEmailService, EmailService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CrowdfundingPlatform", Version = "v1" });
