@@ -93,7 +93,7 @@ namespace CrowdfundingPlatform.Controllers
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(registeredUser, false);
-                    return RedirectToAction("Index", "Home");
+                    return Ok();
                 }
                 else
                 {
@@ -103,11 +103,7 @@ namespace CrowdfundingPlatform.Controllers
                     }
                 }
             }
-
-/*            await _userService.Create(new Mapper(new MapperConfiguration(
-                cfg => cfg.CreateMap<UserRegistrationModel, UserDTO>()
-                )).Map<UserDTO>(user));*/
-            return Ok();
+            return BadRequest(ModelState);
         }
 
         // TODO: fix edit endpoint
@@ -134,7 +130,7 @@ namespace CrowdfundingPlatform.Controllers
                     IdentityResult result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
                     if (result.Succeeded)
                     {
-                        return RedirectToAction("Index");
+                        return Ok();
                     }
                     else
                     {
@@ -146,10 +142,10 @@ namespace CrowdfundingPlatform.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Пользователь не найден");
+                    ModelState.AddModelError(string.Empty, "User is not found!");
                 }
             }
-            return Ok(model);
+            return BadRequest(ModelState);
         }
 
         [HttpDelete("{id}")]

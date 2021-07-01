@@ -42,8 +42,13 @@ namespace CrowdfundingPlatform
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IPhotoService, PhotoService>();
             services.AddDbContext<CrowdfundingDbContext>(a => a.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddIdentity<User, IdentityRole>()
-                .AddEntityFrameworkStores<CrowdfundingDbContext>();
+            services.AddIdentity<User, IdentityRole>(opts => {
+                opts.Password.RequiredLength = 5;
+                opts.Password.RequireNonAlphanumeric = false;
+                opts.Password.RequireLowercase = false;
+                opts.Password.RequireUppercase = false;
+                opts.Password.RequireDigit = false;
+            }).AddEntityFrameworkStores<CrowdfundingDbContext>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CrowdfundingPlatform", Version = "v1" });
