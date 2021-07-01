@@ -88,11 +88,10 @@ namespace CrowdfundingPlatform.Controllers
                                 ))
                             .ForAllOtherMembers(opt => opt.Ignore())
                     )).Map<User>(user);
-                // добавляем пользователя
+
                 var result = await _userManager.CreateAsync(registeredUser, user.Password);
                 if (result.Succeeded)
                 {
-                    // установка куки
                     await _signInManager.SignInAsync(registeredUser, false);
                     return RedirectToAction("Index", "Home");
                 }
@@ -124,10 +123,33 @@ namespace CrowdfundingPlatform.Controllers
             return Ok();
         }
 
-        [HttpPut("changePass")]
-        public async Task<ActionResult> Put(UserChangePasswordModel user)
+        [HttpPost("change-password")]
+        public async Task<ActionResult> ChangePassword(UserChangePasswordModel model)
         {
-            return NotFound();
+            if (ModelState.IsValid)
+            {
+                User user = await _userManager.FindByIdAsync(model.Id.ToString());
+                if (user != null)
+                {
+                    IdentityResult result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Пользователь не найден");
+                }
+            }
+            return Ok(model);
         }
 
         [HttpDelete("{id}")]

@@ -7,8 +7,8 @@ namespace CrowdfundingPlatform.Models.User
 {
     public class UserChangePasswordModel : BaseModel
     {
-        public string OldEncryptedPassword { get; set; }
+        public string OldPassword { get; set; }
 
-        public string NewEncryptedPassword { get; set; }
+        public string NewPassword { get; set; }
     }
 }
