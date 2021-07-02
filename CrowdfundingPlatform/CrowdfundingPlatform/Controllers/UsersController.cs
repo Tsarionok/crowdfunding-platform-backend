@@ -24,6 +24,7 @@ namespace CrowdfundingPlatform.Controllers
         IUserService _userService;
         ICityService _cityService;
         IEmailService _emailService;
+        IJwtService _jwtService;
 
         //TODO: relocate to DAL
         private readonly UserManager<User> _userManager;
@@ -32,12 +33,14 @@ namespace CrowdfundingPlatform.Controllers
         public UsersController(IUserService userService, 
             ICityService cityService,
             IEmailService emailService,
+            IJwtService jwtService,
             UserManager<User> userManager,
             SignInManager<User> signInManager)
         {
             _userService = userService;
             _cityService = cityService;
             _emailService = emailService;
+            _jwtService = jwtService;
             _userManager = userManager;
             _signInManager = signInManager;
         }
@@ -148,7 +151,6 @@ namespace CrowdfundingPlatform.Controllers
         }
 
         [HttpPost("login")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(UserLoginModel user)
         {
             if (ModelState.IsValid)
@@ -156,6 +158,7 @@ namespace CrowdfundingPlatform.Controllers
                 Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(user.Email, user.Password, user.RememberMe, false);
                 if (result.Succeeded)
                 {
+                    user.Token = _jwtService.CreateToken(user.Email);
                     return Ok(user);
                 }
                 else
