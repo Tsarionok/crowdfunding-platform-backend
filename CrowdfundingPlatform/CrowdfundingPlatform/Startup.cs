@@ -32,7 +32,6 @@ namespace CrowdfundingPlatform
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ICountryService, CountryService>();
@@ -41,23 +40,29 @@ namespace CrowdfundingPlatform
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IPhotoService, PhotoService>();
-            services.AddDbContext<CrowdfundingDbContext>(a => a.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddIdentity<User, IdentityRole>(opts => {
-                opts.Password.RequiredLength = 5;
-                opts.Password.RequireNonAlphanumeric = false;
-                opts.Password.RequireLowercase = false;
-                opts.Password.RequireUppercase = false;
-                opts.Password.RequireDigit = false;
-                opts.User.RequireUniqueEmail = true;
-                opts.User.AllowedUserNameCharacters = ".@abcdefghijklmnopqrstuvwxyz";
-            })
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddDbContext<CrowdfundingDbContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")
+                ));
+
+            services.AddIdentity<User, IdentityRole>(opts => 
+                {
+                    opts.Password.RequiredLength = 5;
+                    opts.Password.RequireNonAlphanumeric = false;
+                    opts.Password.RequireLowercase = false;
+                    opts.Password.RequireUppercase = false;
+                    opts.Password.RequireDigit = false;
+                    opts.User.RequireUniqueEmail = true;
+                    opts.User.AllowedUserNameCharacters = ".@abcdefghijklmnopqrstuvwxyz";
+                })
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<CrowdfundingDbContext>()
                 .AddDefaultTokenProviders();
-            services.AddScoped<IEmailService, EmailService>();
+
             services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CrowdfundingPlatform", Version = "v1" });
-            });
+                {
+                    c.SwaggerDoc("v1", new OpenApiInfo { Title = "CrowdfundingPlatform", Version = "v1" });
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -74,8 +79,8 @@ namespace CrowdfundingPlatform
 
             app.UseRouting();
 
-            app.UseAuthorization();
             app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

@@ -147,6 +147,24 @@ namespace CrowdfundingPlatform.Controllers
             }
         }
 
+        [HttpPost("login")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(UserLoginModel user)
+        {
+            if (ModelState.IsValid)
+            {
+                Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(user.Email, user.Password, user.RememberMe, false);
+                if (result.Succeeded)
+                {
+                    return Ok(user);
+                }
+                else
+                {
+                    ModelState.AddModelError("LoginError", "Incorrect username and (or) password");
+                }
+            }
+            return Unauthorized(ModelState);
+        }
 
         // TODO: fix edit endpoint
         [HttpPut("edit")]
