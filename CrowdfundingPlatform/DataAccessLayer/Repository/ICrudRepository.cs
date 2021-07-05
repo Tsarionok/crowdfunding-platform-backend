@@ -7,16 +7,16 @@ using DataAccessLayer.Entity;
 
 namespace DataAccessLayer.Repository
 {
-    public interface ICrudRepository<T> : IExistenceRepository where T : class
+    public interface ICrudRepository<T, U> where T : class
     {
         public Task Create(T entity);
 
-        public Task<T> ReadById(int id);
+        public Task<T> ReadById(U id);
 
         public Task<ICollection<T>> ReadAll();
 
         public Task Update(T entity);
 
-        public Task<T> DeleteById(int id);
+        public Task<T> DeleteById(U id);
     }
 }

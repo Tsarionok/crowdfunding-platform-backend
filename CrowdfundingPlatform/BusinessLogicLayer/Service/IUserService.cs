@@ -7,7 +7,7 @@ using BusinessLogicLayer.DTO;
 
 namespace BusinessLogicLayer.Service
 {
-    public interface IUserService : ICrudService<UserDTO>
+    public interface IUserService : ICrudService<UserDTO, string>
     {
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.DTO
 {
-    public class UserProjectDTO : BaseDTO
+    public class UserProjectDTO : BaseDTO<int>
     {
         public UserDTO User { get; set; }
 

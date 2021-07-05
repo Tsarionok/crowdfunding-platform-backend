@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using BusinessLogicLayer.DTO;
 using DataAccessLayer.Context;
 using DataAccessLayer.Entity;
@@ -35,7 +36,7 @@ namespace BusinessLogicLayer.Service.Implementation
                 Id = deletedDonationHitory.Id,
                 Message = deletedDonationHitory.Message,
                 Project = new ProjectService(_unitOfWork).ReadById(deletedDonationHitory.Project.Id).Result,
-                User = new UserService(_unitOfWork).ReadById(Int32.Parse(deletedDonationHitory.User.Id)).Result
+                User = new UserService(_unitOfWork).ReadById(deletedDonationHitory.User.Id).Result
             });
         }
 
@@ -50,7 +51,7 @@ namespace BusinessLogicLayer.Service.Implementation
                     Id = readableDonationHistory.Id,
                     Message = readableDonationHistory.Message,
                     Project = new ProjectService(_unitOfWork).ReadById(readableDonationHistory.Project.Id).Result,
-                    User = new UserService(_unitOfWork).ReadById(Int32.Parse(readableDonationHistory.User.Id)).Result
+                    User = new UserService(_unitOfWork).ReadById(readableDonationHistory.User.Id).Result
                 });
             }
             return await Task.Run(() => donationHistories);
@@ -65,7 +66,7 @@ namespace BusinessLogicLayer.Service.Implementation
                 Id = readableDonationHistory.Id,
                 Message = readableDonationHistory.Message,
                 Project = new ProjectService(_unitOfWork).ReadById(readableDonationHistory.Project.Id).Result,
-                User = new UserService(_unitOfWork).ReadById(Int32.Parse(readableDonationHistory.User.Id)).Result
+                User = new UserService(_unitOfWork).ReadById(readableDonationHistory.User.Id).Result
             });
         }
 
@@ -79,6 +80,28 @@ namespace BusinessLogicLayer.Service.Implementation
                 Project = _unitOfWork.Projects.ReadById(donationHistory.Project.Id).Result,
                 User = _unitOfWork.Users.ReadById(donationHistory.User.Id).Result
             });
+        }
+
+        public async Task Donate(DonationHistoryDTO donate)
+        {
+            // TODO: make a semblance of a transaction
+
+            Project project = _unitOfWork.Projects.ReadById(donate.Project.Id).Result;
+
+            project.CurrentDonationSum += donate.DonationSum;
+
+            await _unitOfWork.Projects.Update(project);
+
+            await _unitOfWork.DonationHistories.Create(new Mapper(
+                    new MapperConfiguration(cfg => cfg.CreateMap<DonationHistoryDTO, DonationHistory>()
+                            .ForMember(dest => dest.Project, opt => opt.MapFrom(
+                                    source => _unitOfWork.Projects.ReadById(donate.Project.Id).Result
+                                ))
+                            .ForMember(dest => dest.User, opt => opt.MapFrom(
+                                    source => _unitOfWork.Users.ReadById(donate.User.Id).Result
+                                ))
+                        ))
+                .Map<DonationHistory>(donate));
         }
     }
 }

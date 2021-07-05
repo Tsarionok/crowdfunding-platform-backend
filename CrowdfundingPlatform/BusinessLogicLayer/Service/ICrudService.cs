@@ -7,16 +7,16 @@ using BusinessLogicLayer.DTO;
 
 namespace BusinessLogicLayer.Service
 {
-    public interface ICrudService<T> where T : BaseDTO 
+    public interface ICrudService<T, U> where T : BaseDTO<U>
     {
         public Task Create(T dto);
 
-        public Task<T> ReadById(int id);
+        public Task<T> ReadById(U id);
 
         public Task<ICollection<T>> ReadAll();
 
         public Task Update(T dto);
 
-        public Task<T> DeleteById(int id);
+        public Task<T> DeleteById(U id);
     }
 }

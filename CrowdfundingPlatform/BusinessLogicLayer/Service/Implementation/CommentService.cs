@@ -34,7 +34,7 @@ namespace BusinessLogicLayer.Service.Implementation
                 Id = deletedComment.Id,
                 Message = deletedComment.Message,
                 Project = new ProjectService(_unitOfWork).ReadById(deletedComment.Project.Id).Result,
-                User = new UserService(_unitOfWork).ReadById(Int32.Parse(deletedComment.User.Id)).Result
+                User = new UserService(_unitOfWork).ReadById(deletedComment.User.Id).Result
             });
         }
 
@@ -49,7 +49,7 @@ namespace BusinessLogicLayer.Service.Implementation
                     Id = readableComment.Id,
                     Message = readableComment.Message,
                     Project = new ProjectService(_unitOfWork).ReadById(readableComment.Project.Id).Result,
-                    User = new UserService(_unitOfWork).ReadById(Int32.Parse(readableComment.User.Id)).Result
+                    User = new UserService(_unitOfWork).ReadById(readableComment.User.Id).Result
                 });
             }
             return await Task.Run(() => comments);
@@ -64,7 +64,7 @@ namespace BusinessLogicLayer.Service.Implementation
                 Id = readableComment.Id,
                 Message = readableComment.Message,
                 Project = new ProjectService(_unitOfWork).ReadById(readableComment.Project.Id).Result,
-                User = new UserService(_unitOfWork).ReadById(Int32.Parse(readableComment.User.Id)).Result
+                User = new UserService(_unitOfWork).ReadById(readableComment.User.Id).Result
             });
         }
 

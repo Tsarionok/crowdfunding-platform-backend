@@ -7,7 +7,7 @@ using DataAccessLayer.Entity;
 
 namespace DataAccessLayer.Repository
 {
-    public interface IDonationHistoryRepository : ICrudRepository<DonationHistory>
+    public interface IDonationHistoryRepository : ICrudRepository<DonationHistory, int>
     {
     }
 }

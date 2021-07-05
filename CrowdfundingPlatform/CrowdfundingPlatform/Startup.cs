@@ -45,6 +45,7 @@ namespace CrowdfundingPlatform
             services.AddScoped<IPhotoService, PhotoService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<IDonationHistoryService, DonationHistoryService>();
 
             services.AddDbContext<CrowdfundingDbContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")

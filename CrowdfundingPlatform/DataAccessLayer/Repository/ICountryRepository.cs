@@ -7,7 +7,7 @@ using DataAccessLayer.Entity;
 
 namespace DataAccessLayer.Repository
 {
-    public interface ICountryRepository : ICrudRepository<Country>
+    public interface ICountryRepository : ICrudRepository<Country, int>
     {
         
     }

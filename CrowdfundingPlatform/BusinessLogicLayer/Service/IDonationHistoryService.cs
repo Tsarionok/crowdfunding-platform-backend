@@ -7,7 +7,8 @@ using BusinessLogicLayer.DTO;
 
 namespace BusinessLogicLayer.Service
 {
-    public interface IDonationHistoryService : ICrudService<DonationHistoryDTO>
+    public interface IDonationHistoryService : ICrudService<DonationHistoryDTO, int>
     {
+        public Task Donate(DonationHistoryDTO donationHistory);
     }
 }

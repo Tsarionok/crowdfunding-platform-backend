@@ -64,7 +64,7 @@ namespace CrowdfundingPlatform.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserModel>> Get(int id)
+        public async Task<ActionResult<UserModel>> Get(string id)
         {
             Mapper mapper = new Mapper(new MapperConfiguration(
                     cfg => cfg.CreateMap<UserDTO, UserModel>()
@@ -219,7 +219,7 @@ namespace CrowdfundingPlatform.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(string id)
         {
             await _userService.DeleteById(id);
             return Ok();

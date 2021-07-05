@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.DTO
 {
-    public class PhotoDTO : BaseDTO
+    public class PhotoDTO : BaseDTO<int>
     {
         public ProjectDTO Project { get; set; }
 

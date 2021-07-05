@@ -7,7 +7,7 @@ using BusinessLogicLayer.DTO;
 
 namespace BusinessLogicLayer.Service
 {
-    public interface ICategoryService : ICrudService<CategoryDTO>
+    public interface ICategoryService : ICrudService<CategoryDTO, int>
     {
     }
 }
