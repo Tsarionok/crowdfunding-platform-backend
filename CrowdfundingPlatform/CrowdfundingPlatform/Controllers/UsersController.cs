@@ -151,15 +151,22 @@ namespace CrowdfundingPlatform.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(UserLoginModel user)
+        public async Task<IActionResult> Login(UserAuthenticateModel user)
         {
             if (ModelState.IsValid)
             {
                 Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(user.Email, user.Password, user.RememberMe, false);
                 if (result.Succeeded)
                 {
-                    user.Token = _jwtService.CreateToken(user.Email);
-                    return Ok(user);
+                    UserLoginModel userLogin = new Mapper(new MapperConfiguration(
+                            cfg => cfg.CreateMap<UserAuthenticateModel, UserLoginModel>()
+                                .ForMember(dest => dest.Token, opt => opt.MapFrom(
+                                        source => _jwtService.CreateToken(source.Email)
+                                    ))
+                                // TODO: complete Id's field
+                        )).Map<UserLoginModel>(user);
+
+                    return Ok(userLogin);
                 }
                 else
                 {
