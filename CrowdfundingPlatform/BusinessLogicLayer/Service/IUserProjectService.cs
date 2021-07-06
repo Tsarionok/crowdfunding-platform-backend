@@ -12,5 +12,7 @@ namespace BusinessLogicLayer.Service
         public Task Estimate(UserProjectDTO evaluation);
 
         public Task AddToFavourites(UserProjectDTO favourite);
+
+        public Task UpdateOwner(UserProjectDTO owner);
     }
 }

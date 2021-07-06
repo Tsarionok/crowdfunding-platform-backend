@@ -100,5 +100,14 @@ namespace BusinessLogicLayer.Service.Implementation
                     .ForMember(dest => dest.User, opt => opt.Ignore())
                 )).Map<UserProject>(favourite));
         }
+
+        public async Task UpdateOwner(UserProjectDTO owner)
+        {
+            await _unitOfWork.UserProjects.UpdateOwner(new Mapper(
+                    new MapperConfiguration(cfg => cfg.CreateMap<UserProjectDTO, UserProject>()
+                    .ForMember(dest => dest.Project, opt => opt.Ignore())
+                    .ForMember(dest => dest.User, opt => opt.Ignore())
+                )).Map<UserProject>(owner));
+        }
     }
 }

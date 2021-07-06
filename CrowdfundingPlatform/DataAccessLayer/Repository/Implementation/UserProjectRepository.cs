@@ -102,5 +102,29 @@ namespace DataAccessLayer.Repository.Implementation
             }
             await Context.SaveChangesAsync();
         }
+
+        public async Task UpdateOwner(UserProject userProject)
+        {
+            if (await Context.UserProjects.AnyAsync(c =>
+                    c.ProjectId.Equals(userProject.ProjectId) &&
+                    c.UserId.Equals(userProject.UserId))
+                )
+            {
+                UserProject user = await Context.UserProjects
+                    .Where(c =>
+                        c.ProjectId.Equals(userProject.ProjectId) &&
+                        c.UserId.Equals(userProject.UserId))
+                    .FirstAsync();
+
+                user.IsOwner = userProject.IsOwner;
+
+                Context.Entry(user).State = EntityState.Modified;
+            }
+            else
+            {
+                await Context.UserProjects.AddAsync(userProject);
+            }
+            await Context.SaveChangesAsync();
+        }
     }
 }

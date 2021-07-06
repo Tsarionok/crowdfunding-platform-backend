@@ -81,6 +81,7 @@ namespace CrowdfundingPlatform.Controllers
             return Ok();
         }
 
+        // TODO: refactor return to CategoryModel type
         [HttpDelete("{id}")]
         public async Task<ActionResult<CategoryDTO>> Delete(int id)
         {

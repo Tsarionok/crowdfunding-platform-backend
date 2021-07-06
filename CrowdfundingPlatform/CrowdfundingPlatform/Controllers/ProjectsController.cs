@@ -124,5 +124,22 @@ namespace CrowdfundingPlatform.Controllers
                 );
             return Ok();
         }
+
+        [HttpPost("update-owner")]
+        public async Task<ActionResult> UpdateOwner(ProjectOwnerModel owner)
+        {
+            await _userProjectService.UpdateOwner(new Mapper(
+                    new MapperConfiguration(cfg => cfg.CreateMap<ProjectOwnerModel, UserProjectDTO>()
+                        .ForMember(dest => dest.IsOwner,
+                                    opt => opt.MapFrom(source => source.IsOwner))
+                        .ForMember(dest => dest.UserId,
+                                    opt => opt.MapFrom(source => source.UserId))
+                        .ForMember(dest => dest.ProjectId,
+                                    opt => opt.MapFrom(source => source.ProjectId))
+                        .ForAllOtherMembers(opt => opt.Ignore())
+                    )).Map<UserProjectDTO>(owner)
+                );
+            return Ok();
+        }
     }
 }
