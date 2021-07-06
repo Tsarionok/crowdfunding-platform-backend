@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using BusinessLogicLayer.DTO;
 using DataAccessLayer.Context;
 using DataAccessLayer.Entity;
@@ -21,9 +22,7 @@ namespace BusinessLogicLayer.Service.Implementation
             {
                 Evaluation = userProject.Evaluation,
                 IsFavourites = userProject.IsFavourites,
-                IsOwner = userProject.IsOwner,
-                Project = _unitOfWork.Projects.ReadById(userProject.Project.Id).Result,
-                User = _unitOfWork.Users.ReadById(userProject.User.Id).Result
+                IsOwner = userProject.IsOwner
             });
         }
 
@@ -36,9 +35,7 @@ namespace BusinessLogicLayer.Service.Implementation
                 Id = deletedUserProject.Id,
                 Evaluation = deletedUserProject.Evaluation.Value,
                 IsFavourites = deletedUserProject.IsFavourites,
-                IsOwner = deletedUserProject.IsOwner,
-                Project = new ProjectService(_unitOfWork).ReadById(deletedUserProject.Project.Id).Result,
-                User = new UserService(_unitOfWork).ReadById(deletedUserProject.User.Id).Result
+                IsOwner = deletedUserProject.IsOwner
             });
         }
 
@@ -53,9 +50,7 @@ namespace BusinessLogicLayer.Service.Implementation
                     Id = readableUserProject.Id,
                     Evaluation = readableUserProject.Evaluation.Value,
                     IsFavourites = readableUserProject.IsFavourites,
-                    IsOwner = readableUserProject.IsOwner,
-                    Project = new ProjectService(_unitOfWork).ReadById(readableUserProject.Project.Id).Result,
-                    User = new UserService(_unitOfWork).ReadById(readableUserProject.User.Id).Result
+                    IsOwner = readableUserProject.IsOwner
                 });
             }
 
@@ -71,9 +66,7 @@ namespace BusinessLogicLayer.Service.Implementation
                 Id = readableUserProject.Id,
                 Evaluation = readableUserProject.Evaluation.Value,
                 IsFavourites = readableUserProject.IsFavourites,
-                IsOwner = readableUserProject.IsOwner,
-                Project = new ProjectService(_unitOfWork).ReadById(readableUserProject.Project.Id).Result,
-                User = new UserService(_unitOfWork).ReadById(readableUserProject.User.Id).Result
+                IsOwner = readableUserProject.IsOwner
             });
         }
 
@@ -85,9 +78,29 @@ namespace BusinessLogicLayer.Service.Implementation
                 Evaluation = userProject.Evaluation,
                 IsFavourites = userProject.IsFavourites,
                 IsOwner = userProject.IsOwner,
-                Project = _unitOfWork.Projects.ReadById(userProject.Project.Id).Result,
-                User = _unitOfWork.Users.ReadById(userProject.User.Id).Result
+                Project = _unitOfWork.Projects.ReadById(userProject.ProjectId).Result,
+                User = _unitOfWork.Users.ReadById(userProject.UserId).Result
             });
+        }
+
+        public async Task Estimate(UserProjectDTO evaluation)
+        {
+            if (await _unitOfWork.UserProjects.ReadById(evaluation.Id) == null)
+            {
+                await _unitOfWork.UserProjects.Create(new Mapper(
+                        new MapperConfiguration(cfg => cfg.CreateMap<UserProjectDTO, UserProject>()
+                        .ForMember(dest => dest.Project, opt => opt.Ignore())
+                        .ForMember(dest => dest.User, opt => opt.Ignore())
+                    )).Map<UserProject>(evaluation));
+            } 
+            else
+            {
+                await _unitOfWork.UserProjects.Update(new Mapper(
+                        new MapperConfiguration(cfg => cfg.CreateMap<UserProjectDTO, UserProject>()
+                        .ForMember(dest => dest.Project, opt => opt.Ignore())
+                        .ForMember(dest => dest.User, opt => opt.Ignore())
+                    )).Map<UserProject>(evaluation));
+            }
         }
     }
 }

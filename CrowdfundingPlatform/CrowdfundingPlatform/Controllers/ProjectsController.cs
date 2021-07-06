@@ -18,11 +18,16 @@ namespace CrowdfundingPlatform.Controllers
     {
         IProjectService _projectService;
         ICategoryService _categoryService;
+        IUserProjectService _userProjectService;
 
-        public ProjectsController(IProjectService projectService, ICategoryService categoryService)
+        public ProjectsController(
+            IProjectService projectService, 
+            ICategoryService categoryService,
+            IUserProjectService userProjectService)
         {
             _projectService = projectService;
             _categoryService = categoryService;
+            _userProjectService = userProjectService;
         }
 
         [HttpGet]
@@ -83,6 +88,23 @@ namespace CrowdfundingPlatform.Controllers
         public async Task<ActionResult> Delete(int id)
         {
             await _projectService.DeleteById(id);
+            return Ok();
+        }
+
+        [HttpPost("estimate")]
+        public async Task<ActionResult> Estimate(ProjectEvaluationModel evaluation)
+        {
+            await _userProjectService.Estimate(new Mapper(
+                    new MapperConfiguration(cfg => cfg.CreateMap<ProjectEvaluationModel, UserProjectDTO>()
+                        .ForMember(dest => dest.Evaluation, 
+                                    opt => opt.MapFrom(source => source.Evaluation))
+                        .ForMember(dest => dest.UserId, 
+                                    opt => opt.MapFrom(source => source.UserId))
+                        .ForMember(dest => dest.ProjectId, 
+                                    opt => opt.MapFrom(source => source.ProjectId))
+                        .ForAllOtherMembers(opt => opt.Ignore())
+                    )).Map<UserProjectDTO>(evaluation)
+                );
             return Ok();
         }
     }

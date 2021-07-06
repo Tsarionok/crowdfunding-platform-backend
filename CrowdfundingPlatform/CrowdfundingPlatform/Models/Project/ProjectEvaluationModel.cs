@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogicLayer.DTO
+namespace CrowdfundingPlatform.Models.Project
 {
-    public class UserProjectDTO : BaseDTO<int>
+    public class ProjectEvaluationModel
     {
+        [Required]
         public string UserId { get; set; }
 
+        [Required]
         public int ProjectId { get; set; }
 
-        public bool IsFavourites { get; set; }
-
+        [Range(1, 5)]
         public int Evaluation { get; set; }
-
-        public bool IsOwner { get; set; }
     }
 }

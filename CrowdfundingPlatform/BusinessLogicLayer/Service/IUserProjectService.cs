@@ -9,5 +9,6 @@ namespace BusinessLogicLayer.Service
 {
     public interface IUserProjectService : ICrudService<UserProjectDTO, int>
     {
+        public Task Estimate(UserProjectDTO evaluation);
     }
 }

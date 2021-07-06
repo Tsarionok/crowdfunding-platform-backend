@@ -24,7 +24,7 @@ namespace DataAccessLayer.Repository.Implementation
         public async Task<UserProject> DeleteById(int id)
         {
             UserProject userProject = null;
-            if (HasAnyItem(id).Result)
+            if (await Context.UserProjects.AnyAsync(c => c.Id.Equals(id)))
             {
                 userProject = await Context.UserProjects.Where(u => u.Id.Equals(id)).FirstAsync();
                 Context.UserProjects.Remove(Context.UserProjects
@@ -42,18 +42,17 @@ namespace DataAccessLayer.Repository.Implementation
 
         public async Task<UserProject> ReadById(int id)
         {
-            return await Context.UserProjects.Where(c => c.Id.Equals(id)).FirstAsync();
+            if (await Context.UserProjects.AnyAsync(c => c.Id.Equals(id)))
+            {
+                return await Context.UserProjects.Where(c => c.Id.Equals(id)).FirstAsync();
+            }
+            return null;
         }
 
         public async Task Update(UserProject userProject)
         {
             Context.Entry(userProject).State = EntityState.Modified;
             await Context.SaveChangesAsync();
-        }
-
-        public async Task<bool> HasAnyItem(int id)
-        {
-            return await Context.UserProjects.AnyAsync(c => c.Id.Equals(id));
         }
     }
 }
