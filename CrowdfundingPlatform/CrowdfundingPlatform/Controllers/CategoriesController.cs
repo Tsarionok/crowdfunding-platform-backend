@@ -6,16 +6,18 @@ using BusinessLogicLayer.DTO;
 using BusinessLogicLayer.Service;
 using CrowdfundingPlatform.Models;
 using CrowdfundingPlatform.Models.Category;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CrowdfundingPlatform.Controllers
 {
+    // TODO: Include automapper
+
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriesController : ControllerBase
     {
-        // TODO: Include automapper
         ICategoryService _service;
 
         public CategoriesController(ICategoryService service)
@@ -51,6 +53,7 @@ namespace CrowdfundingPlatform.Controllers
             });
         }
 
+        [Authorize(Roles = "editor")]
         [HttpPost]
         public async Task<ActionResult> Post(CategoryCreateModel model)
         {
@@ -66,6 +69,7 @@ namespace CrowdfundingPlatform.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "editor")]
         [HttpPut]
         public async Task<ActionResult> Put(CategoryModel category)
         {
@@ -82,6 +86,7 @@ namespace CrowdfundingPlatform.Controllers
         }
 
         // TODO: refactor return to CategoryModel type
+        [Authorize(Roles = "editor")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<CategoryDTO>> Delete(int id)
         {
