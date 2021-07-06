@@ -67,22 +67,40 @@ namespace BusinessLogicLayer.Service.Implementation
         {
             Photo readablePhoto = _unitOfWork.Photos.ReadById(id).Result;
 
-            return await Task.Run(() => new PhotoDTO
-            {
-                Id = readablePhoto.Id,
-                Image = readablePhoto.Image,
-                Project = new ProjectService(_unitOfWork).ReadById(readablePhoto.Project.Id).Result
-            });
+            return await Task.Run(() => new Mapper(new MapperConfiguration(
+                    cfg => cfg.CreateMap<Photo, PhotoDTO>()
+                        .ForMember(dest => dest.Project, opt => opt.MapFrom(
+                                source => new Mapper(new MapperConfiguration(
+                                        cfg => cfg.CreateMap<Project, ProjectDTO>()
+                                        .ForMember(dest => dest.Id, opt => opt.MapFrom(
+                                                source => source.Id
+                                            ))
+                                        .ForAllOtherMembers(dest => dest.Ignore())
+                                    )).Map<ProjectDTO>(source.Project)
+                            ))
+                )).Map<PhotoDTO>(readablePhoto));
         }
 
         public async Task Update(PhotoDTO photo)
         {
-            await _unitOfWork.Photos.Update(new Photo
-            {
-                Id = photo.Id,
-                Image = photo.Image,
-                Project = _unitOfWork.Projects.ReadById(photo.Project.Id).Result
-            });
+            await _unitOfWork.Photos.Update(new Mapper(
+                    new MapperConfiguration(
+                        cfg => cfg.CreateMap<PhotoDTO, Photo>()
+                            .ForMember(dest => dest.Project, opt => opt.MapFrom(
+                                    source => new Mapper(new MapperConfiguration(
+                                            cfg => cfg.CreateMap<ProjectDTO, Project>()
+                                                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(
+                                                        source => source.Category.Id
+                                                    ))
+                                                .ForMember(dest => dest.Category, opt => opt.MapFrom(
+                                                        source => new Mapper(new MapperConfiguration(
+                                                                cfg => cfg.CreateMap<CategoryDTO, Category>()
+                                                                    .ForMember(dest => dest.Projects, opt => opt.Ignore())
+                                                            )).Map<Category>(source.Category)
+                                                    ))
+                                        )).Map<Project>(source.Project)
+                                ))
+                )).Map<Photo>(photo));
         }
     }
 }
