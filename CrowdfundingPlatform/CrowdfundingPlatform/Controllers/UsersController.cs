@@ -25,6 +25,7 @@ namespace CrowdfundingPlatform.Controllers
         IUserService _userService;
         ICityService _cityService;
         IEmailService _emailService;
+        IJwtService _jwtService;
 
         //TODO: relocate to DAL
         private readonly UserManager<User> _userManager;
@@ -33,12 +34,14 @@ namespace CrowdfundingPlatform.Controllers
         public UsersController(IUserService userService, 
             ICityService cityService,
             IEmailService emailService,
+            IJwtService jwtService,
             UserManager<User> userManager,
             SignInManager<User> signInManager)
         {
             _userService = userService;
             _cityService = cityService;
             _emailService = emailService;
+            _jwtService = jwtService;
             _userManager = userManager;
             _signInManager = signInManager;
         }
@@ -62,7 +65,7 @@ namespace CrowdfundingPlatform.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserModel>> Get(int id)
+        public async Task<ActionResult<UserModel>> Get(string id)
         {
             Mapper mapper = new Mapper(new MapperConfiguration(
                     cfg => cfg.CreateMap<UserDTO, UserModel>()
@@ -149,15 +152,22 @@ namespace CrowdfundingPlatform.Controllers
         }
 
         [HttpPost("login")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(UserLoginModel user)
+        public async Task<IActionResult> Login(UserAuthenticateModel user)
         {
             if (ModelState.IsValid)
             {
                 Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(user.Email, user.Password, user.RememberMe, false);
                 if (result.Succeeded)
                 {
-                    return Ok(user);
+                    UserLoginModel userLogin = new Mapper(new MapperConfiguration(
+                            cfg => cfg.CreateMap<UserAuthenticateModel, UserLoginModel>()
+                                .ForMember(dest => dest.Token, opt => opt.MapFrom(
+                                        source => _jwtService.CreateToken(source.Email)
+                                    ))
+                                // TODO: complete Id's field
+                        )).Map<UserLoginModel>(user);
+
+                    return Ok(userLogin);
                 }
                 else
                 {
@@ -210,7 +220,7 @@ namespace CrowdfundingPlatform.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(string id)
         {
             await _userService.DeleteById(id);
             return Ok();

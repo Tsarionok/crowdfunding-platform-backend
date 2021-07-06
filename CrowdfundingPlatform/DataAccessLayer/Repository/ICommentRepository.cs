@@ -7,7 +7,7 @@ using DataAccessLayer.Entity;
 
 namespace DataAccessLayer.Repository
 {
-    public interface ICommentRepository : ICrudRepository<Comment>
+    public interface ICommentRepository : ICrudRepository<Comment, int>
     {
     }
 }

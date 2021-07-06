@@ -22,10 +22,10 @@ namespace DataAccessLayer.Repository.Implementation
             await Context.SaveChangesAsync();
         }
 
-        public async Task<User> DeleteById(int id)
+        public async Task<User> DeleteById(string id)
         {
             User user = null;
-            if (HasAnyItem(id).Result)
+            if (await Context.Users.AnyAsync(c => c.Id.Equals(id)))
             {
                 user = await Context.Users.Where(u => u.Id.Equals(id)).FirstAsync();
                 Context.Users.Remove(Context.Users
@@ -43,7 +43,7 @@ namespace DataAccessLayer.Repository.Implementation
                 .ToListAsync();
         }
 
-        public async Task<User> ReadById(int id)
+        public async Task<User> ReadById(string id)
         {
             return await Context.Users.Where(c => c.Id.Equals(id))
                 .Include(u => u.City.Country)
@@ -54,11 +54,6 @@ namespace DataAccessLayer.Repository.Implementation
         {
             Context.Entry(user).State = EntityState.Modified;
             await Context.SaveChangesAsync();
-        }
-
-        public async Task<bool> HasAnyItem(int id)
-        {
-            return await Context.Users.AnyAsync(c => c.Id.Equals(id));
         }
     }
 }

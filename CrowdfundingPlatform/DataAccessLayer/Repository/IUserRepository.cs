@@ -7,7 +7,7 @@ using DataAccessLayer.Entity;
 
 namespace DataAccessLayer.Repository
 {
-    public interface IUserRepository : ICrudRepository<User>
+    public interface IUserRepository : ICrudRepository<User, string>
     {
     }
 }

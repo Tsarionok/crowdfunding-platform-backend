@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.DTO
 {
-    public abstract class BaseDTO
+    public abstract class BaseDTO<T>
     {
-        public int Id { get; set; }
+        public T Id { get; set; }
     }
 }

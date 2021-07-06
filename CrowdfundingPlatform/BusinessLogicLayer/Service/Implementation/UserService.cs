@@ -35,7 +35,7 @@ namespace BusinessLogicLayer.Service.Implementation
             await _unitOfWork.Users.Create(createdUser);
         }
 
-        public async Task<UserDTO> DeleteById(int id)
+        public async Task<UserDTO> DeleteById(string id)
         {
             UserDTO deletedUser = new Mapper(new MapperConfiguration(
                     cfg => cfg.CreateMap<User, UserDTO>()
@@ -82,7 +82,7 @@ namespace BusinessLogicLayer.Service.Implementation
             return await Task.Run(() => users);
         }
 
-        public async Task<UserDTO> ReadById(int id)
+        public async Task<UserDTO> ReadById(string id)
         {
             UserDTO user = new Mapper(new MapperConfiguration(
                 cfg => cfg.CreateMap<User, UserDTO>()

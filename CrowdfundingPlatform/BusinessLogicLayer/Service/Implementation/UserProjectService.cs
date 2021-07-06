@@ -38,7 +38,7 @@ namespace BusinessLogicLayer.Service.Implementation
                 IsFavourites = deletedUserProject.IsFavourites,
                 IsOwner = deletedUserProject.IsOwner,
                 Project = new ProjectService(_unitOfWork).ReadById(deletedUserProject.Project.Id).Result,
-                User = new UserService(_unitOfWork).ReadById(Int32.Parse(deletedUserProject.User.Id)).Result
+                User = new UserService(_unitOfWork).ReadById(deletedUserProject.User.Id).Result
             });
         }
 
@@ -55,7 +55,7 @@ namespace BusinessLogicLayer.Service.Implementation
                     IsFavourites = readableUserProject.IsFavourites,
                     IsOwner = readableUserProject.IsOwner,
                     Project = new ProjectService(_unitOfWork).ReadById(readableUserProject.Project.Id).Result,
-                    User = new UserService(_unitOfWork).ReadById(Int32.Parse(readableUserProject.User.Id)).Result
+                    User = new UserService(_unitOfWork).ReadById(readableUserProject.User.Id).Result
                 });
             }
 
@@ -73,7 +73,7 @@ namespace BusinessLogicLayer.Service.Implementation
                 IsFavourites = readableUserProject.IsFavourites,
                 IsOwner = readableUserProject.IsOwner,
                 Project = new ProjectService(_unitOfWork).ReadById(readableUserProject.Project.Id).Result,
-                User = new UserService(_unitOfWork).ReadById(Int32.Parse(readableUserProject.User.Id)).Result
+                User = new UserService(_unitOfWork).ReadById(readableUserProject.User.Id).Result
             });
         }
 

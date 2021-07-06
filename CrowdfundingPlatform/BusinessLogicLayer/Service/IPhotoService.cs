@@ -7,7 +7,7 @@ using BusinessLogicLayer.DTO;
 
 namespace BusinessLogicLayer.Service
 {
-    public interface IPhotoService : ICrudService<PhotoDTO>
+    public interface IPhotoService : ICrudService<PhotoDTO, int>
     {
     }
 }

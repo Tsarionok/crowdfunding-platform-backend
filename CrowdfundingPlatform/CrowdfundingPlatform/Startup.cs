@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using BusinessLogicLayer.Service;
 using BusinessLogicLayer.Service.Implementation;
 using DataAccessLayer.Context;
 using DataAccessLayer.Entity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -16,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 namespace CrowdfundingPlatform
@@ -41,6 +44,9 @@ namespace CrowdfundingPlatform
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IPhotoService, PhotoService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<IDonationHistoryService, DonationHistoryService>();
+
             services.AddDbContext<CrowdfundingDbContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")
                 ));
@@ -58,6 +64,20 @@ namespace CrowdfundingPlatform
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<CrowdfundingDbContext>()
                 .AddDefaultTokenProviders();
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("super secret key"));
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(
+                    opt =>
+                    {
+                        opt.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuerSigningKey = true,
+                            IssuerSigningKey = key,
+                            ValidateAudience = false,
+                            ValidateIssuer = false,
+                        };
+                    });
 
             services.AddSwaggerGen(c =>
                 {

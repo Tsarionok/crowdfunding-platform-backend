@@ -7,7 +7,7 @@ using BusinessLogicLayer.DTO;
 
 namespace BusinessLogicLayer.Service
 {
-    public interface ICommentService : ICrudService<CommentDTO>
+    public interface ICommentService : ICrudService<CommentDTO, int>
     {
     }
 }

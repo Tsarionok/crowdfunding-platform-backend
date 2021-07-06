@@ -7,7 +7,7 @@ using DataAccessLayer.Entity;
 
 namespace DataAccessLayer.Repository
 {
-    public interface IPhotoRepository : ICrudRepository<Photo>
+    public interface IPhotoRepository : ICrudRepository<Photo, int>
     {
     }
 }
