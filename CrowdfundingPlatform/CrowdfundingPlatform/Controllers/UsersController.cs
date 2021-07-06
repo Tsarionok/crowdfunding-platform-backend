@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -213,6 +214,25 @@ namespace CrowdfundingPlatform.Controllers
         {
             await _userService.DeleteById(id);
             return Ok();
+        }
+
+        [HttpPost("upload-avatar")]
+        public async Task<IActionResult> UploadAvatar([Bind("Id,PostMode,Message,Image,AccountId,Created,Status")] UserAvatarModel post, IFormFile Image)
+        {
+            if (ModelState.IsValid)
+            {
+                using (var ms = new MemoryStream())
+                {
+                    Image.CopyTo(ms);
+                    post.Avatar = ms.ToArray();
+                }
+
+                UserDTO user = _userService.ReadById(post.UserId);
+                user.Avatar = post.Avatar;
+                await _userService.UploadAvatar(user);
+                return Ok(post);
+            }
+            return BadRequest(ModelState);
         }
     }
 }

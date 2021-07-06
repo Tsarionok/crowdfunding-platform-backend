@@ -145,5 +145,24 @@ namespace BusinessLogicLayer.Service.Implementation
             };
             await _unitOfWork.Users.Update(updatedUser);
         }
+
+        public async Task UploadAvatar(UserDTO user)
+        {
+            User updatedUser = new Mapper(new MapperConfiguration(
+                cfg => cfg.CreateMap<UserDTO, User>()
+                    .ForMember(dest => dest.CityId, opt => opt.MapFrom(source => source.City.Id))
+                    .ForMember(dest => dest.City, opt => opt.MapFrom(source =>
+                            new Mapper(new MapperConfiguration(
+                                cfg => cfg.CreateMap<CityDTO, City>()
+                                    .ForMember(dest => dest.Country, opt => opt.MapFrom(source =>
+                                        new Mapper(new MapperConfiguration(
+                                                cfg => cfg.CreateMap<CountryDTO, Country>()
+                                            )).Map<Country>(source.Country)
+                                        ))
+                            )).Map<City>(source.City)))
+                )).Map<User>(user);
+
+            await _unitOfWork.Users.Update(updatedUser);
+        }
     }
 }

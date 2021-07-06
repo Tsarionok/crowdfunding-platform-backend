@@ -9,5 +9,6 @@ namespace BusinessLogicLayer.Service
 {
     public interface IUserService : ICrudService<UserDTO>
     {
+        public Task UploadAvatar(UserDTO user);
     }
 }
