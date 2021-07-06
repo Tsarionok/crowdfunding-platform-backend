@@ -72,27 +72,14 @@ namespace BusinessLogicLayer.Service.Implementation
 
         public async Task<ProjectDTO> ReadById(int id)
         {
-            Project readableProject = _unitOfWork.Projects.ReadById(id).Result;
-            Category category = readableProject.Category;
-            CategoryDTO createdCategory = new CategoryDTO
-            {
-                Id = category.Id,
-                Name = category.Name
-            };
-
-            ProjectDTO project = new ProjectDTO
-            {
-                Id = readableProject.Id,
-                Name = readableProject.Name,
-                Description = readableProject.Description,
-                StartFundraisingDate = readableProject.StartFundraisingDate.Value,
-                FinalFundraisingDate = readableProject.FinalFundraisingDate.Value,
-                CurrentDonationSum = readableProject.CurrentDonationSum,
-                TotalDonationSum = readableProject.TotalDonationSum.Value,
-                Category = createdCategory,
-                MainPhoto = readableProject.MainPhoto
-            };
-
+            ProjectDTO project = new Mapper(new MapperConfiguration(
+                    cfg => cfg.CreateMap<Project, ProjectDTO>()
+                        .ForMember(dest => dest.Category, opt => opt.MapFrom(
+                                source => new Mapper(new MapperConfiguration(
+                                        cfg => cfg.CreateMap<Category, CategoryDTO>()
+                                    )).Map<CategoryDTO>(source.Category)
+                            ))
+                )).Map<ProjectDTO>(await _unitOfWork.Projects.ReadById(id));
             return await Task.Run(() => project);
         }
 

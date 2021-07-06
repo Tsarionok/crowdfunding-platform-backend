@@ -6,12 +6,8 @@ using System.Threading.Tasks;
 
 namespace CrowdfundingPlatform.Models.Donation
 {
-    public class DonateModel
+    public class DonationHistoryModel
     {
-        public string UserId { get; set; }
-
-        public int ProjectId { get; set; }
-
         [Required]
         public decimal Amount { get; set; }
 

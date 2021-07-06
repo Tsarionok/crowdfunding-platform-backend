@@ -20,7 +20,7 @@ namespace CrowdfundingPlatform.Controllers
         IUserService _userService;
 
         public DonationsController(
-            IDonationHistoryService donationService, 
+            IDonationHistoryService donationService,
             IProjectService projectService,
             IUserService userService)
         {
@@ -32,7 +32,7 @@ namespace CrowdfundingPlatform.Controllers
         [HttpPost]
         public async Task<ActionResult> Donate(DonateModel donate)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 await _donationService.Donate(new Mapper(new MapperConfiguration(
                     cfg => cfg.CreateMap<DonateModel, DonationHistoryDTO>()
@@ -56,6 +56,20 @@ namespace CrowdfundingPlatform.Controllers
             {
                 return BadRequest(ModelState);
             }
+        }
+
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<ICollection<DonationHistoryModel>>> GetHistory(string userId)
+        {
+            ICollection<DonationHistoryModel> donationHistory = new Mapper(
+                    new MapperConfiguration( cfg => cfg.CreateMap<DonationHistoryDTO, DonationHistoryModel>()
+                        .ForMember(dest => dest.Amount, opt => opt.MapFrom(source => source.DonationSum))
+                )).Map<ICollection<DonationHistoryModel>>(await _donationService.ReadAllByUserId(userId));
+            if (donationHistory.Count.Equals(0))
+            {
+                return NoContent();
+            }
+            return Ok(donationHistory);
         }
     }
 }

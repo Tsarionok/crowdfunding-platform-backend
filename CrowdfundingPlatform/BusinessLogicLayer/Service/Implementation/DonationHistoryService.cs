@@ -57,6 +57,15 @@ namespace BusinessLogicLayer.Service.Implementation
             return await Task.Run(() => donationHistories);
         }
 
+        public async Task<ICollection<DonationHistoryDTO>> ReadAllByUserId(string userId)
+        {
+            return new Mapper(new MapperConfiguration(
+                    cfg => cfg.CreateMap<DonationHistory, DonationHistoryDTO>()
+                        .ForMember(dest => dest.Project, opt => opt.Ignore())
+                        .ForMember(dest => dest.User, opt => opt.Ignore())
+                )).Map<ICollection<DonationHistoryDTO>>(await _unitOfWork.DonationHistories.ReadAllByUserId(userId));
+        }
+
         public async Task<DonationHistoryDTO> ReadById(int id)
         {
             DonationHistory readableDonationHistory = _unitOfWork.DonationHistories.ReadById(id).Result;

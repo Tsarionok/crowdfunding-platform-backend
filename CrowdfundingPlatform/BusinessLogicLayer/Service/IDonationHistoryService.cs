@@ -9,6 +9,8 @@ namespace BusinessLogicLayer.Service
 {
     public interface IDonationHistoryService : ICrudService<DonationHistoryDTO, int>
     {
+        public Task<ICollection<DonationHistoryDTO>> ReadAllByUserId(string userId);
+
         public Task Donate(DonationHistoryDTO donationHistory);
     }
 }

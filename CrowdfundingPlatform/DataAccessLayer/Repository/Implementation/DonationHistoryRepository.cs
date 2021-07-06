@@ -24,7 +24,7 @@ namespace DataAccessLayer.Repository.Implementation
         public async Task<DonationHistory> DeleteById(int id)
         {
             DonationHistory donationHistory = null;
-            if (HasAnyItem(id).Result)
+            if (await Context.DonationHistories.AnyAsync(c => c.Id.Equals(id)))
             {
                 donationHistory = await Context.DonationHistories.Where(d => d.Id.Equals(id)).FirstAsync();
                 Context.DonationHistories.Remove(Context.DonationHistories
@@ -40,6 +40,11 @@ namespace DataAccessLayer.Repository.Implementation
             return await Context.DonationHistories.ToListAsync();
         }
 
+        public async Task<ICollection<DonationHistory>> ReadAllByUserId(string userId)
+        {
+            return await Context.DonationHistories.Where(d => d.UserId.Equals(userId)).ToListAsync();
+        }
+
         public async Task<DonationHistory> ReadById(int id)
         {
             return await Context.DonationHistories.Where(d => d.Id.Equals(id)).FirstAsync();
@@ -49,11 +54,6 @@ namespace DataAccessLayer.Repository.Implementation
         {
             Context.Entry(donationHistory).State = EntityState.Modified;
             await Context.SaveChangesAsync();
-        }
-
-        public async Task<bool> HasAnyItem(int id)
-        {
-            return await Context.DonationHistories.AnyAsync(c => c.Id.Equals(id));
         }
     }
 }
