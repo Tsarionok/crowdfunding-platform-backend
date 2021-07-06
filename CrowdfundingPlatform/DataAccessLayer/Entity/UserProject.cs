@@ -9,6 +9,7 @@ namespace DataAccessLayer.Entity
 {
     public class UserProject : BaseEntity
     {
+        [Required]
         public string UserId { get; set; }
         public User User { get; set; } 
 
@@ -18,7 +19,7 @@ namespace DataAccessLayer.Entity
         public bool IsFavourites { get; set; } = false;
 
         [Range(1, 5)]
-        public int Evaluation { get; set; }
+        public int? Evaluation { get; set; }
 
         public bool IsOwner { get; set; } = false;
     }

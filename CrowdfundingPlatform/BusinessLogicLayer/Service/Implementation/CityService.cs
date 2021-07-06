@@ -40,7 +40,7 @@ namespace BusinessLogicLayer.Service.Implementation
             {
                 Id = city.Id,
                 Name = city.Name,
-                Country = new CountryService(_unitOfWork).ReadById(city.CountryId.Value).Result
+                Country = new CountryService(_unitOfWork).ReadById(city.CountryId).Result
             });
         }
 
@@ -54,7 +54,7 @@ namespace BusinessLogicLayer.Service.Implementation
                 {
                     Id = readableCity.Id,
                     Name = readableCity.Name,
-                    Country = new CountryService(_unitOfWork).ReadById(readableCity.CountryId.Value).Result
+                    Country = new CountryService(_unitOfWork).ReadById(readableCity.CountryId).Result
                 });
             }
 
@@ -74,7 +74,7 @@ namespace BusinessLogicLayer.Service.Implementation
             {
                 Id = readableCity.Id,
                 Name = readableCity.Name,
-                Country = new CountryService(_unitOfWork).ReadById(readableCity.CountryId.Value).Result
+                Country = new CountryService(_unitOfWork).ReadById(readableCity.CountryId).Result
             });
         }
 

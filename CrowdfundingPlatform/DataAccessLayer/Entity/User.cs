@@ -10,7 +10,6 @@ namespace DataAccessLayer.Entity
 {
     public class User : IdentityUser
     {
-
         public byte[] Avatar { get; set; }
 
         [MaxLength(100)]

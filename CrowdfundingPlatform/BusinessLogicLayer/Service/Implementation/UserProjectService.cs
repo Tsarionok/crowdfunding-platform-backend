@@ -34,7 +34,7 @@ namespace BusinessLogicLayer.Service.Implementation
             return await Task.Run(() => new UserProjectDTO
             {
                 Id = deletedUserProject.Id,
-                Evaluation = deletedUserProject.Evaluation,
+                Evaluation = deletedUserProject.Evaluation.Value,
                 IsFavourites = deletedUserProject.IsFavourites,
                 IsOwner = deletedUserProject.IsOwner,
                 Project = new ProjectService(_unitOfWork).ReadById(deletedUserProject.Project.Id).Result,
@@ -51,7 +51,7 @@ namespace BusinessLogicLayer.Service.Implementation
                 userProjects.Add(new UserProjectDTO
                 {
                     Id = readableUserProject.Id,
-                    Evaluation = readableUserProject.Evaluation,
+                    Evaluation = readableUserProject.Evaluation.Value,
                     IsFavourites = readableUserProject.IsFavourites,
                     IsOwner = readableUserProject.IsOwner,
                     Project = new ProjectService(_unitOfWork).ReadById(readableUserProject.Project.Id).Result,
@@ -69,7 +69,7 @@ namespace BusinessLogicLayer.Service.Implementation
             return await Task.Run(() => new UserProjectDTO
             {
                 Id = readableUserProject.Id,
-                Evaluation = readableUserProject.Evaluation,
+                Evaluation = readableUserProject.Evaluation.Value,
                 IsFavourites = readableUserProject.IsFavourites,
                 IsOwner = readableUserProject.IsOwner,
                 Project = new ProjectService(_unitOfWork).ReadById(readableUserProject.Project.Id).Result,
