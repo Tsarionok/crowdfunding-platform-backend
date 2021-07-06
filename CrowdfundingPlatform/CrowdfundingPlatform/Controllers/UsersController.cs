@@ -237,7 +237,7 @@ namespace CrowdfundingPlatform.Controllers
                     post.Avatar = ms.ToArray();
                 }
 
-                UserDTO user = _userService.ReadById(post.UserId);
+                UserDTO user = await _userService.ReadById(post.UserId);
                 user.Avatar = post.Avatar;
                 await _userService.UploadAvatar(user);
                 return Ok(post);
