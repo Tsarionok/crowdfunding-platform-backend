@@ -102,5 +102,14 @@ namespace BusinessLogicLayer.Service.Implementation
                     )).Map<UserProject>(evaluation));
             }
         }
+
+        public async Task AddToFavourites(UserProjectDTO favourite)
+        {
+            await _unitOfWork.UserProjects.AddToFavourites(new Mapper(
+                    new MapperConfiguration(cfg => cfg.CreateMap<UserProjectDTO, UserProject>()
+                    .ForMember(dest => dest.Project, opt => opt.Ignore())
+                    .ForMember(dest => dest.User, opt => opt.Ignore())
+                )).Map<UserProject>(favourite));
+        }
     }
 }

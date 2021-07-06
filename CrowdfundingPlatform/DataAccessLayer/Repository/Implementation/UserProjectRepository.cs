@@ -54,5 +54,29 @@ namespace DataAccessLayer.Repository.Implementation
             Context.Entry(userProject).State = EntityState.Modified;
             await Context.SaveChangesAsync();
         }
+
+        public async Task AddToFavourites(UserProject userProject)
+        {
+            if (await Context.UserProjects.AnyAsync(c =>
+                    c.ProjectId.Equals(userProject.ProjectId) &&
+                    c.UserId.Equals(userProject.UserId))
+                )
+            {
+                UserProject user = await Context.UserProjects
+                    .Where(c =>
+                        c.ProjectId.Equals(userProject.ProjectId) &&
+                        c.UserId.Equals(userProject.UserId))
+                    .FirstAsync();
+
+                user.IsFavourites = userProject.IsFavourites;
+
+                Context.Entry(user).State = EntityState.Modified; 
+            }
+            else
+            {
+                await Context.UserProjects.AddAsync(userProject);
+            }
+            await Context.SaveChangesAsync();
+        }
     }
 }

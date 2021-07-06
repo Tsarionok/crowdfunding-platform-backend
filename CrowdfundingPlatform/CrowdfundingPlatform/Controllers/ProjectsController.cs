@@ -107,5 +107,22 @@ namespace CrowdfundingPlatform.Controllers
                 );
             return Ok();
         }
+
+        [HttpPost("add-to-favourites")]
+        public async Task<ActionResult> AddToFavourites(ProjectFavouritesModel favourites)
+        {
+            await _userProjectService.AddToFavourites(new Mapper(
+                    new MapperConfiguration(cfg => cfg.CreateMap<ProjectFavouritesModel, UserProjectDTO>()
+                        .ForMember(dest => dest.IsFavourites,
+                                    opt => opt.MapFrom(source => source.IsFavourites))
+                        .ForMember(dest => dest.UserId,
+                                    opt => opt.MapFrom(source => source.UserId))
+                        .ForMember(dest => dest.ProjectId,
+                                    opt => opt.MapFrom(source => source.ProjectId))
+                        .ForAllOtherMembers(opt => opt.Ignore())
+                    )).Map<UserProjectDTO>(favourites)
+                );
+            return Ok();
+        }
     }
 }

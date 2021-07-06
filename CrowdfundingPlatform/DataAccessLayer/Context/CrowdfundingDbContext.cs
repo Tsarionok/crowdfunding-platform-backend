@@ -33,6 +33,7 @@ namespace DataAccessLayer.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<UserProject>().HasAlternateKey(u => new { u.UserId, u.ProjectId });
             base.OnModelCreating(modelBuilder);
         }
     }
