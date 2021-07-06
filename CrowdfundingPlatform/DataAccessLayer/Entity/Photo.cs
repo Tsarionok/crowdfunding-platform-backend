@@ -8,6 +8,7 @@ namespace DataAccessLayer.Entity
 {
     public class Photo : BaseEntity
     {
+        public int ProjectId { get; set; }
         public Project Project { get; set; }
 
         public byte[] Image { get; set; }

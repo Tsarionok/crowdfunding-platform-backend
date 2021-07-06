@@ -51,7 +51,7 @@ namespace BusinessLogicLayer.Service.Implementation
             {
                 CategoryDTO createdCategory = new CategoryDTO
                 {
-                    Id = readableProject.CategoryId,
+                    Id = readableProject.CategoryId.Value,
                     Name = readableProject.Category.Name
                 };
 
@@ -59,10 +59,10 @@ namespace BusinessLogicLayer.Service.Implementation
                     Id = readableProject.Id,
                     Name = readableProject.Name,
                     Description = readableProject.Description,
-                    StartFundraisingDate = readableProject.StartFundraisingDate,
-                    FinalFundraisingDate = readableProject.FinalFundraisingDate,
+                    StartFundraisingDate = readableProject.StartFundraisingDate.Value,
+                    FinalFundraisingDate = readableProject.FinalFundraisingDate.Value,
                     CurrentDonationSum = readableProject.CurrentDonationSum,
-                    TotalDonationSum = readableProject.TotalDonationSum,
+                    TotalDonationSum = readableProject.TotalDonationSum.Value,
                     Category = createdCategory,
                     MainPhoto = readableProject.MainPhoto
                 });
@@ -85,10 +85,10 @@ namespace BusinessLogicLayer.Service.Implementation
                 Id = readableProject.Id,
                 Name = readableProject.Name,
                 Description = readableProject.Description,
-                StartFundraisingDate = readableProject.StartFundraisingDate,
-                FinalFundraisingDate = readableProject.FinalFundraisingDate,
+                StartFundraisingDate = readableProject.StartFundraisingDate.Value,
+                FinalFundraisingDate = readableProject.FinalFundraisingDate.Value,
                 CurrentDonationSum = readableProject.CurrentDonationSum,
-                TotalDonationSum = readableProject.TotalDonationSum,
+                TotalDonationSum = readableProject.TotalDonationSum.Value,
                 Category = createdCategory,
                 MainPhoto = readableProject.MainPhoto
             };
