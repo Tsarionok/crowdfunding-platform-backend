@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CrowdfundingPlatform.Models.User
 {
-    public class UserLoginModel : BaseModel
+    public class UserLoginModel : BaseModel<string>
     {
         [Required]
         public string Email { get; set; }

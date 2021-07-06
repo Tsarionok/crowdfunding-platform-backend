@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CrowdfundingPlatform.Models.City
 {
-    public class CityModel : BaseModel
+    public class CityModel : BaseModel<int>
     {
         public string Name { get; set; }
     }

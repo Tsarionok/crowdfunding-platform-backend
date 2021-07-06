@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CrowdfundingPlatform.Models.User
 {
-    public class UserEditModel : BaseModel
+    public class UserEditModel : BaseModel<int>
     {
         public string Email { get; set; }
 

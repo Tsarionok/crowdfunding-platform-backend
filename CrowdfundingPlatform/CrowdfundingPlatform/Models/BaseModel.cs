@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace CrowdfundingPlatform.Models
 {
-    public abstract class BaseModel
+    public abstract class BaseModel<T>
     {
-        public int Id { get; set; }
+        public T Id { get; set; }
     }
 }

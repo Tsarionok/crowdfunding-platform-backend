@@ -146,6 +146,23 @@ namespace BusinessLogicLayer.Service.Implementation
             await _unitOfWork.Users.Update(updatedUser);
         }
 
+        public async Task<UserDTO> ReadByEmail(string Email)
+        {
+            return new Mapper(new MapperConfiguration(
+                    cfg => cfg.CreateMap<User, UserDTO>()
+                        .ForMember(dest => dest.City, opt => opt.MapFrom(source =>
+                            new Mapper(new MapperConfiguration(
+                                cfg => cfg.CreateMap<City, CityDTO>()
+                                    .ForMember(dest => dest.Country, opt => opt.MapFrom(source =>
+                                        new Mapper(new MapperConfiguration(
+                                                cfg => cfg.CreateMap<Country, CountryDTO>()
+                                                    .ForMember(dest => dest.Cities, opt => opt.Ignore())
+                                            )).Map<CountryDTO>(source.Country)
+                                        ))
+                            )).Map<CityDTO>(source.City)))
+                )).Map<UserDTO>(await _unitOfWork.Users.ReadByEmail(Email));
+        }
+
         public async Task UploadAvatar(UserDTO user)
         {
             User updatedUser = new Mapper(new MapperConfiguration(

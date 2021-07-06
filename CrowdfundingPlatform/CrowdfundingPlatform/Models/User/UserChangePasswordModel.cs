@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CrowdfundingPlatform.Models.User
 {
-    public class UserChangePasswordModel : BaseModel
+    public class UserChangePasswordModel : BaseModel<int>
     {
         public string OldPassword { get; set; }
 

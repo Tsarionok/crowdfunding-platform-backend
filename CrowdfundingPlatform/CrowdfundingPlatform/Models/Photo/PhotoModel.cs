@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CrowdfundingPlatform.Models.Photo
 {
-    public class PhotoModel : BaseModel
+    public class PhotoModel : BaseModel<int>
     {
         public byte[] Image { get; set; }
 

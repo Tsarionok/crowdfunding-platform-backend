@@ -6,7 +6,7 @@ using CrowdfundingPlatform.Models.Category;
 
 namespace CrowdfundingPlatform.Models.Project
 {
-    public class ProjectModel : BaseModel
+    public class ProjectModel : BaseModel<int>
     {
         public string Name { get; set; }
 

@@ -164,7 +164,9 @@ namespace CrowdfundingPlatform.Controllers
                                 .ForMember(dest => dest.Token, opt => opt.MapFrom(
                                         source => _jwtService.CreateToken(source.Email)
                                     ))
-                                // TODO: complete Id's field
+                                .ForMember(dest => dest.Id, opt => opt.MapFrom(
+                                        source => _userService.ReadByEmail(source.Email).Result.Id
+                                    ))
                         )).Map<UserLoginModel>(user);
 
                     return Ok(userLogin);
@@ -243,6 +245,13 @@ namespace CrowdfundingPlatform.Controllers
                 return Ok(post);
             }
             return BadRequest(ModelState);
+        }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return Ok();
         }
     }
 }

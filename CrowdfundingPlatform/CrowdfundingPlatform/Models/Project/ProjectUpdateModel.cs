@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CrowdfundingPlatform.Models.Project
 {
-    public class ProjectUpdateModel : BaseModel
+    public class ProjectUpdateModel : BaseModel<int>
     {
         public string Name { get; set; }
 

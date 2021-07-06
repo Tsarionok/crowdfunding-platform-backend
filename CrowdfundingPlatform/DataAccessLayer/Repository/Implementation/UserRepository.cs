@@ -50,6 +50,13 @@ namespace DataAccessLayer.Repository.Implementation
                 .FirstAsync();
         }
 
+        public async Task<User> ReadByEmail(string email)
+        {
+            return await Context.Users.Where(c => c.Email.Equals(email))
+                .Include(u => u.City.Country)
+                .FirstAsync();
+        }
+
         public async Task Update(User user)
         {
             Context.Entry(user).State = EntityState.Modified;

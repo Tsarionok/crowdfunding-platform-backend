@@ -10,5 +10,7 @@ namespace BusinessLogicLayer.Service
     public interface IUserService : ICrudService<UserDTO, string>
     {
         public Task UploadAvatar(UserDTO user);
+
+        public Task<UserDTO> ReadByEmail(string email);
     }
 }

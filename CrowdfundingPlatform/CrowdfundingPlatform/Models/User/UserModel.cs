@@ -6,7 +6,7 @@ using CrowdfundingPlatform.Models.City;
 
 namespace CrowdfundingPlatform.Models.User
 {
-    public class UserModel : BaseModel
+    public class UserModel : BaseModel<string>
     {
         public string Email { get; set; }
 
