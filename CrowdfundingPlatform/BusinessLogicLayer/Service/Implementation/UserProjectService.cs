@@ -85,22 +85,11 @@ namespace BusinessLogicLayer.Service.Implementation
 
         public async Task Estimate(UserProjectDTO evaluation)
         {
-            if (await _unitOfWork.UserProjects.ReadById(evaluation.Id) == null)
-            {
-                await _unitOfWork.UserProjects.Create(new Mapper(
-                        new MapperConfiguration(cfg => cfg.CreateMap<UserProjectDTO, UserProject>()
-                        .ForMember(dest => dest.Project, opt => opt.Ignore())
-                        .ForMember(dest => dest.User, opt => opt.Ignore())
-                    )).Map<UserProject>(evaluation));
-            } 
-            else
-            {
-                await _unitOfWork.UserProjects.Update(new Mapper(
-                        new MapperConfiguration(cfg => cfg.CreateMap<UserProjectDTO, UserProject>()
-                        .ForMember(dest => dest.Project, opt => opt.Ignore())
-                        .ForMember(dest => dest.User, opt => opt.Ignore())
-                    )).Map<UserProject>(evaluation));
-            }
+            await _unitOfWork.UserProjects.Estimate(new Mapper(
+                    new MapperConfiguration(cfg => cfg.CreateMap<UserProjectDTO, UserProject>()
+                    .ForMember(dest => dest.Project, opt => opt.Ignore())
+                    .ForMember(dest => dest.User, opt => opt.Ignore())
+                )).Map<UserProject>(evaluation));
         }
 
         public async Task AddToFavourites(UserProjectDTO favourite)
