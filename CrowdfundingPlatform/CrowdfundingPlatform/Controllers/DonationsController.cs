@@ -71,5 +71,12 @@ namespace CrowdfundingPlatform.Controllers
             }
             return Ok(donationHistory);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            await _donationService.DeleteById(id);
+            return Ok();
+        }
     }
 }

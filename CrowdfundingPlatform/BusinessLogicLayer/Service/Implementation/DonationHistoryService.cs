@@ -29,15 +29,11 @@ namespace BusinessLogicLayer.Service.Implementation
 
         public async Task<DonationHistoryDTO> DeleteById(int id)
         {
-            DonationHistory deletedDonationHitory = _unitOfWork.DonationHistories.DeleteById(id).Result;
-
-            return await Task.Run(() => new DonationHistoryDTO 
-            {
-                Id = deletedDonationHitory.Id,
-                Message = deletedDonationHitory.Message,
-                Project = new ProjectService(_unitOfWork).ReadById(deletedDonationHitory.Project.Id).Result,
-                User = new UserService(_unitOfWork).ReadById(deletedDonationHitory.User.Id).Result
-            });
+            return new Mapper(new MapperConfiguration(
+                    cfg => cfg.CreateMap<DonationHistory, DonationHistoryDTO>()
+                        .ForMember(dest => dest.Project, opt => opt.Ignore())
+                        .ForMember(dest => dest.User, opt => opt.Ignore())
+                )).Map<DonationHistoryDTO>(await _unitOfWork.DonationHistories.DeleteById(id));
         }
 
         public async Task<ICollection<DonationHistoryDTO>> ReadAll()
