@@ -7,6 +7,7 @@ using BusinessLogicLayer.DTO;
 using BusinessLogicLayer.Service;
 using CrowdfundingPlatform.Models.Category;
 using CrowdfundingPlatform.Models.Project;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,6 +31,7 @@ namespace CrowdfundingPlatform.Controllers
             _userProjectService = userProjectService;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<ICollection<ProjectModel>>> Get()
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using BusinessLogicLayer.DTO;
 using BusinessLogicLayer.Service;
@@ -25,6 +26,7 @@ namespace CrowdfundingPlatform.Controllers
             _service = service;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<ICollection<CategoryModel>>> Get()
         {
@@ -41,6 +43,7 @@ namespace CrowdfundingPlatform.Controllers
             return Ok(categories);
         }
 
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<CategoryModel>> Get(int id)
         {

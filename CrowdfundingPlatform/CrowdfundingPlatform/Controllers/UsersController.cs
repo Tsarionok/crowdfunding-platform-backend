@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using BusinessLogicLayer.DTO;
@@ -82,6 +83,7 @@ namespace CrowdfundingPlatform.Controllers
             return Ok(mapper.Map<UserModel>(await _userService.ReadById(id)));
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult> Register(UserRegistrationModel user)
         {
@@ -124,7 +126,6 @@ namespace CrowdfundingPlatform.Controllers
         }
 
         [HttpGet("confirm-email")]
-        [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {
             if (userId == null || code == null)
@@ -151,12 +152,20 @@ namespace CrowdfundingPlatform.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<IActionResult> Login(UserAuthenticateModel user)
+        public async Task<IActionResult> Login(UserAuthenticateModel user, CancellationToken cancellationToken)
         {
             if (ModelState.IsValid)
             {
-                Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(user.Email, user.Password, user.RememberMe, false);
+                var authorizedUser = await _userManager.FindByEmailAsync(user.Email);
+                if (authorizedUser == null)
+                {
+                    return Unauthorized(ModelState);
+                }
+
+                Microsoft.AspNetCore.Identity.SignInResult result 
+                    = await _signInManager.CheckPasswordSignInAsync(authorizedUser, user.Password, false);
                 if (result.Succeeded)
                 {
                     UserLoginModel userLogin = new Mapper(new MapperConfiguration(
@@ -179,6 +188,7 @@ namespace CrowdfundingPlatform.Controllers
             return Unauthorized(ModelState);
         }
 
+        [Authorize]
         // TODO: fix edit endpoint
         [HttpPut("edit")]
         public async Task<ActionResult> Put(UserEditModel user)
@@ -192,6 +202,7 @@ namespace CrowdfundingPlatform.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpPost("change-password")]
         public async Task<ActionResult> ChangePassword(UserChangePasswordModel model)
         {
@@ -228,6 +239,7 @@ namespace CrowdfundingPlatform.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpPost("upload-avatar")]
         public async Task<IActionResult> UploadAvatar([Bind("Id,PostMode,Message,Image,AccountId,Created,Status")] UserAvatarModel post, IFormFile Image)
         {
@@ -247,6 +259,7 @@ namespace CrowdfundingPlatform.Controllers
             return BadRequest(ModelState);
         }
 
+        [Authorize]
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {

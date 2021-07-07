@@ -58,13 +58,18 @@ namespace BusinessLogicLayer.Service.Implementation
             ICollection<UserDTO> users = new Mapper(new MapperConfiguration(
                 cfg => cfg.CreateMap<User, UserDTO>()
                     .ForMember(dest => dest.Email, opt => opt.MapFrom(
-                            source => source.Email
-                        ))
-                    .ForMember(dest => dest.EncryptedPassword, opt => opt.MapFrom(
-                            source => source.PasswordHash
-                        ))
-                    .ForMember(dest => dest.FirstName, opt => opt.MapFrom(
                             source => source.UserName
+                        ))
+                    .ForMember(dest => dest.Sex, opt => opt.MapFrom(
+                            source => source.Sex
+                        ))
+                    .ForMember(dest => dest.Phone, opt => opt.MapFrom(
+                            source => source.PhoneNumber
+                        ))
+                    .ForMember(dest => dest.EncryptedPassword, opt => opt.Ignore()
+                        )
+                    .ForMember(dest => dest.IsTwoFactorAuthenticationEnabled, opt => opt.MapFrom(
+                            source => source.TwoFactorEnabled
                         ))
                     .ForMember(dest => dest.City, opt => opt.MapFrom(source =>
                             new Mapper(new MapperConfiguration(
@@ -76,7 +81,6 @@ namespace BusinessLogicLayer.Service.Implementation
                                             )).Map<CountryDTO>(source.Country)
                                         ))
                             )).Map<CityDTO>(source.City)))
-                    .ForAllOtherMembers(opt => opt.Ignore())
                 )).Map<List<UserDTO>>(await _unitOfWork.Users.ReadAll());
 
             return await Task.Run(() => users);

@@ -8,11 +8,13 @@ using BusinessLogicLayer.Service.Implementation;
 using DataAccessLayer.Context;
 using DataAccessLayer.Entity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -52,7 +54,24 @@ namespace CrowdfundingPlatform
                     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")
                 ));
 
-            services.AddIdentity<User, IdentityRole>(opts => 
+            /*var builder = services.AddIdentityCore<User>();
+            var identityBuilder = new IdentityBuilder(builder.UserType, builder.Services);
+            identityBuilder.AddEntityFrameworkStores<CrowdfundingDbContext>();
+            identityBuilder.AddSignInManager<SignInManager<User>>();*/
+
+            services.AddMvc(option =>
+            {
+                // Отключаем маршрутизацию конечных точек на основе endpoint-based logic из EndpointMiddleware
+                // и продолжаем использование маршрутизации на основе IRouter. 
+                option.EnableEndpointRouting = false;
+                var policy = new AuthorizationPolicyBuilder()
+                                    .RequireAuthenticatedUser()
+                                    .RequireAuthenticatedUser()
+                                    .Build();
+                option.Filters.Add(new AuthorizeFilter(policy));
+            }).SetCompatibilityVersion(CompatibilityVersion.Latest);
+
+            var builder = services.AddIdentityCore<User>(opts =>
                 {
                     opts.Password.RequiredLength = 5;
                     opts.Password.RequireNonAlphanumeric = false;
@@ -66,20 +85,27 @@ namespace CrowdfundingPlatform
                 .AddEntityFrameworkStores<CrowdfundingDbContext>()
                 .AddDefaultTokenProviders();
 
+            var identityBuilder = new IdentityBuilder(builder.UserType, builder.Services);
+            identityBuilder.AddEntityFrameworkStores<CrowdfundingDbContext>();
+            identityBuilder.AddSignInManager<SignInManager<User>>();
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("super secret key"));
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(
+                .AddJwtBearer(
                     opt =>
                     {
                         opt.TokenValidationParameters = new TokenValidationParameters
                         {
                             ValidateIssuerSigningKey = true,
+                            ValidateLifetime = true,
                             IssuerSigningKey = key,
                             ValidateAudience = false,
                             ValidateIssuer = false,
                         };
                     });
 
+            services.AddSignalR();
             services.AddSwaggerGen(c =>
                 {
                     c.SwaggerDoc("v1", new OpenApiInfo { Title = "CrowdfundingPlatform", Version = "v1" });
