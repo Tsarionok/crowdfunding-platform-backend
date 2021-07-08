@@ -7,11 +7,13 @@ using BusinessLogicLayer.Service;
 using BusinessLogicLayer.Service.Implementation;
 using CrowdfundingPlatform.Models.City;
 using CrowdfundingPlatform.Models.Country;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CrowdfundingPlatform.Controllers
 {
+    [EnableCors("AllowOrigin")]
     [Route("api/[controller]")]
     [ApiController]
     public class CitiesController : ControllerBase

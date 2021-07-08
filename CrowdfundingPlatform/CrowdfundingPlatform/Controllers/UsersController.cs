@@ -14,12 +14,14 @@ using CrowdfundingPlatform.Models.User;
 using DataAccessLayer.Entity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CrowdfundingPlatform.Controllers
 {
+    [EnableCors("AllowOrigin")]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -126,6 +128,7 @@ namespace CrowdfundingPlatform.Controllers
             return BadRequest(ModelState);
         }
 
+        [AllowAnonymous]
         [HttpGet("confirm-email")]
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {
@@ -176,6 +179,9 @@ namespace CrowdfundingPlatform.Controllers
                                     ))
                                 .ForMember(dest => dest.Id, opt => opt.MapFrom(
                                         source => _userService.ReadByEmail(source.Email).Result.Id
+                                    ))
+                                .ForMember(dest => dest.Roles, opt => opt.MapFrom(
+                                        source => _userService.GetRoles(source.Email).Result
                                     ))
                         )).Map<UserLoginModel>(user);
 

@@ -7,13 +7,21 @@ using AutoMapper;
 using BusinessLogicLayer.DTO;
 using DataAccessLayer.Context;
 using DataAccessLayer.Entity;
+using Microsoft.AspNetCore.Identity;
 
 namespace BusinessLogicLayer.Service.Implementation
 {
     public class UserService : BaseService, IUserService
     {
-        public UserService(IUnitOfWork unitOfWork) : base(unitOfWork)
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
+
+        public UserService(IUnitOfWork unitOfWork,
+                            UserManager<User> userManager,
+                            SignInManager<User> signInManager) : base(unitOfWork)
         {
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         public async Task Create(UserDTO user)
@@ -184,6 +192,11 @@ namespace BusinessLogicLayer.Service.Implementation
                 )).Map<User>(user);
 
             await _unitOfWork.Users.Update(updatedUser);
+        }
+
+        public async Task<ICollection<string>> GetRoles(string email)
+        {
+            return await _userManager.GetRolesAsync(_unitOfWork.Users.ReadByEmail(email).Result);
         }
     }
 }

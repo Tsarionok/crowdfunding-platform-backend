@@ -6,11 +6,13 @@ using AutoMapper;
 using BusinessLogicLayer.DTO;
 using BusinessLogicLayer.Service;
 using CrowdfundingPlatform.Models.Donation;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CrowdfundingPlatform.Controllers
 {
+    [EnableCors("AllowOrigin")]
     [Route("api/[controller]")]
     [ApiController]
     public class DonationsController : ControllerBase

@@ -12,5 +12,7 @@ namespace CrowdfundingPlatform.Models.User
         public string Email { get; set; }
 
         public string Token { get; set; }
+
+        public ICollection<string> Roles { get; set; }
     }
 }

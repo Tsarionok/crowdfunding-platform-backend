@@ -50,7 +50,10 @@ namespace CrowdfundingPlatform
             services.AddScoped<IDonationHistoryService, DonationHistoryService>();
             services.AddScoped<IUserProjectService, UserProjectService>();
 
-            services.AddCors();
+            services.AddCors(c =>
+            {
+                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());
+            });
 
             services.AddDbContext<CrowdfundingDbContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")
@@ -133,7 +136,10 @@ namespace CrowdfundingPlatform
 
             app.UseRouting();
 
-            app.UseCors(builder => builder.AllowAnyOrigin());
+            app.UseCors(builder => builder
+                            .AllowAnyOrigin()
+                            .AllowAnyMethod()
+                            .AllowAnyHeader());
 
             app.UseAuthentication();
             app.UseAuthorization();

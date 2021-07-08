@@ -4,12 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using CrowdfundingPlatform.Models.Role;
 using DataAccessLayer.Entity;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CrowdfundingPlatform.Controllers
 {
+    [EnableCors("AllowOrigin")]
     [Route("api/[controller]")]
     [ApiController]
     public class RolesController : ControllerBase

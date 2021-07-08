@@ -8,13 +8,14 @@ using BusinessLogicLayer.Service;
 using CrowdfundingPlatform.Models;
 using CrowdfundingPlatform.Models.Category;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CrowdfundingPlatform.Controllers
 {
     // TODO: Include automapper
-
+    [EnableCors("AllowOrigin")]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriesController : ControllerBase

@@ -8,11 +8,13 @@ using BusinessLogicLayer.Service;
 using CrowdfundingPlatform.Models.Category;
 using CrowdfundingPlatform.Models.Project;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CrowdfundingPlatform.Controllers
 {
+    [EnableCors("AllowOrigin")]
     [Route("api/[controller]")]
     [ApiController]
     public class ProjectsController : ControllerBase

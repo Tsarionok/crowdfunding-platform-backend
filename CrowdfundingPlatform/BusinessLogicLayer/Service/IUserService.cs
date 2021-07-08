@@ -12,5 +12,7 @@ namespace BusinessLogicLayer.Service
         public Task UploadAvatar(UserDTO user);
 
         public Task<UserDTO> ReadByEmail(string email);
+
+        public Task<ICollection<string>> GetRoles(string email);
     }
 }
