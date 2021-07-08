@@ -50,6 +50,8 @@ namespace CrowdfundingPlatform
             services.AddScoped<IDonationHistoryService, DonationHistoryService>();
             services.AddScoped<IUserProjectService, UserProjectService>();
 
+            services.AddCors();
+
             services.AddDbContext<CrowdfundingDbContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")
                 ));
@@ -103,7 +105,12 @@ namespace CrowdfundingPlatform
                             ValidateAudience = false,
                             ValidateIssuer = false,
                         };
-                    });
+                    })
+                .AddGoogle(options =>
+                {
+                    options.ClientId = "265731603382-22ep87q1c0vqii0p0n2lol8p4jcq7d7a.apps.googleusercontent.com";
+                    options.ClientSecret = "DziLV2h7qBDdNzzgEKiuEV8Z";
+                });
 
             services.AddSignalR();
             services.AddSwaggerGen(c =>
@@ -125,6 +132,8 @@ namespace CrowdfundingPlatform
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(builder => builder.AllowAnyOrigin());
 
             app.UseAuthentication();
             app.UseAuthorization();

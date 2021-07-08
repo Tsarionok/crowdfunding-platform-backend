@@ -12,6 +12,7 @@ using CrowdfundingPlatform.Models.City;
 using CrowdfundingPlatform.Models.Country;
 using CrowdfundingPlatform.Models.User;
 using DataAccessLayer.Entity;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -154,7 +155,7 @@ namespace CrowdfundingPlatform.Controllers
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<IActionResult> Login(UserAuthenticateModel user, CancellationToken cancellationToken)
+        public async Task<IActionResult> Login(UserAuthenticateModel user)
         {
             if (ModelState.IsValid)
             {
@@ -188,7 +189,24 @@ namespace CrowdfundingPlatform.Controllers
             return Unauthorized(ModelState);
         }
 
-        [Authorize]
+        [AllowAnonymous]
+        [HttpGet("google-login")]
+        public async Task<IActionResult> GoogleLogin()
+        {
+            var result = await HttpContext.AuthenticateAsync();
+
+            var claims = result.Principal.Identities
+                .FirstOrDefault().Claims.Select(claim => new
+                {
+                    claim.Issuer,
+                    claim.OriginalIssuer,
+                    claim.Type,
+                    claim.Value
+                });
+
+            return Ok(claims);
+        }
+
         // TODO: fix edit endpoint
         [HttpPut("edit")]
         public async Task<ActionResult> Put(UserEditModel user)
@@ -202,7 +220,6 @@ namespace CrowdfundingPlatform.Controllers
             return Ok();
         }
 
-        [Authorize]
         [HttpPost("change-password")]
         public async Task<ActionResult> ChangePassword(UserChangePasswordModel model)
         {
@@ -239,7 +256,6 @@ namespace CrowdfundingPlatform.Controllers
             return Ok();
         }
 
-        [Authorize]
         [HttpPost("upload-avatar")]
         public async Task<IActionResult> UploadAvatar([Bind("Id,PostMode,Message,Image,AccountId,Created,Status")] UserAvatarModel post, IFormFile Image)
         {
@@ -259,7 +275,6 @@ namespace CrowdfundingPlatform.Controllers
             return BadRequest(ModelState);
         }
 
-        [Authorize]
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
