@@ -25,7 +25,7 @@ namespace DataAccessLayer.Repository.Implementation
         public async Task<Category> DeleteById(int id)
         {
             Category category = null;
-            if (!HasAnyItem(id).Result)
+            if (HasAnyItem(id).Result)
             {
                 category = await Context.Categories.Where(c => c.Id.Equals(id)).FirstAsync();
                 Context.Categories.Remove(Context.Categories

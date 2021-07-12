@@ -31,52 +31,23 @@ namespace CrowdfundingPlatform.Controllers
         [HttpGet]
         public async Task<ActionResult<ICollection<CountryWithCitiesModel>>> Get()
         {
-            ICollection<CountryWithCitiesModel> countries = new List<CountryWithCitiesModel>();
-
-            foreach (CountryDTO readableCountry in await _service.ReadAll())
-            {
-                ICollection<CityModel> cities = new List<CityModel>();
-
-                foreach(CityDTO city in readableCountry.Cities)
-                {
-                    cities.Add(new CityModel
-                    {
-                        Id = city.Id,
-                        Name = city.Name
-                    });
-                }
-                countries.Add(new CountryWithCitiesModel
-                {
-                    Id = readableCountry.Id,
-                    Name = readableCountry.Name,
-                    Cities = cities
-                });
-            }
+            ICollection<CountryWithCitiesModel> countries = new Mapper(new MapperConfiguration(
+                    cfg => cfg.CreateMap<CountryDTO, CountryWithCitiesModel>()
+                        .ForMember(dest => dest.Cities, opt => opt.Ignore())
+                )).Map<ICollection<CountryWithCitiesModel>>(await _service.ReadAll());
+            
             return Ok(countries);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<CountryWithCitiesModel>> Get(int id)
         {
-            CountryDTO readableCountry = await _service.ReadById(id);
+            CountryWithCitiesModel country = new Mapper(new MapperConfiguration(
+                    cfg => cfg.CreateMap<CountryDTO, CountryWithCitiesModel>()
+                        .ForMember(dest => dest.Cities, opt => opt.Ignore())
+                )).Map<CountryWithCitiesModel>(await _service.ReadById(id));
 
-            ICollection<CityModel> cities = new List<CityModel>();
-
-            foreach (CityDTO city in readableCountry.Cities)
-            {
-                cities.Add(new CityModel
-                {
-                    Id = city.Id,
-                    Name = city.Name
-                });
-            }
-
-            return Ok(new CountryWithCitiesModel
-            {
-                Id = readableCountry.Id,
-                Name = readableCountry.Name,
-                Cities = cities
-            });
+            return Ok(country);
         }
 
         [HttpPost]
@@ -112,11 +83,11 @@ namespace CrowdfundingPlatform.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            CountryDTO country = await _service.DeleteById(id);
-            if (country == null)
-            {
-                return NotFound();
-            }
+            new Mapper(new MapperConfiguration(
+                    cfg => cfg.CreateMap<CountryDTO, CountryWithCitiesModel>()
+                        .ForMember(dest => dest.Cities, opt => opt.Ignore())
+                )).Map<CountryWithCitiesModel>(await _service.DeleteById(id));
+
             return Ok();
         }
     }

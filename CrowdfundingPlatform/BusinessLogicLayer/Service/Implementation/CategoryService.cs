@@ -20,57 +20,39 @@ namespace BusinessLogicLayer.Service.Implementation
 
         public async Task Create(CategoryDTO category)
         {
-            await _unitOfWork.Categories.Create(new Category
-            {
-                Name = category.Name
-            });
+            await _unitOfWork.Categories.Create(new Mapper(new MapperConfiguration(
+                    cfg => cfg.CreateMap<CategoryDTO, Category>()
+                        .ForMember(dest => dest.Projects, opt => opt.Ignore())
+                )).Map<Category>(category));
         }
 
         public async Task<CategoryDTO> DeleteById(int id)
         {
-            Category deletedCategory = _unitOfWork.Categories.DeleteById(id).Result;
-
-            return await Task.Run(() => new CategoryDTO
-            {
-                Id = deletedCategory.Id,
-                Name = deletedCategory.Name
-            });
+            return new Mapper(new MapperConfiguration(
+                    cfg => cfg.CreateMap<Category, CategoryDTO>()
+                )).Map<CategoryDTO>(await _unitOfWork.Categories.DeleteById(id)); 
         }
 
         public async Task<ICollection<CategoryDTO>> ReadAll()
         {
-            ICollection<CategoryDTO> categories = new List<CategoryDTO>();
-
-            foreach (Category readableCategory in _unitOfWork.Categories.ReadAll().Result)
-            {
-                categories.Add(new CategoryDTO
-                {
-                    Id = readableCategory.Id,
-                    Name = readableCategory.Name
-                });
-            }
-
-            return await Task.Run(() => categories);
+            return new Mapper(new MapperConfiguration(
+                    cfg => cfg.CreateMap<Category, CategoryDTO>()
+                )).Map<ICollection<CategoryDTO>>(await _unitOfWork.Categories.ReadAll());
         }
 
         public async Task<CategoryDTO> ReadById(int id)
         {
-            Category readableCategory = _unitOfWork.Categories.ReadById(id).Result;
-
-            return await Task.Run(() => new CategoryDTO
-            {
-                Id = readableCategory.Id,
-                Name = readableCategory.Name
-            });
+            return new Mapper(new MapperConfiguration(
+                    cfg => cfg.CreateMap<Category, CategoryDTO>()
+                )).Map<CategoryDTO>(await _unitOfWork.Categories.ReadById(id));
         }
 
         public async Task Update(CategoryDTO category)
         {
-            await _unitOfWork.Categories.Update(new Category
-            {
-                Id = category.Id,
-                Name = category.Name
-            });
+            await _unitOfWork.Categories.Update(new Mapper(new MapperConfiguration(
+                    cfg => cfg.CreateMap<CategoryDTO, Category>()
+                        .ForMember(dest => dest.Projects, opt => opt.Ignore())
+                )).Map<Category>(category));
         }
     }
 }

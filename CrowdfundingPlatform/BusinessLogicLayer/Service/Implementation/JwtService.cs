@@ -31,7 +31,8 @@ namespace BusinessLogicLayer.Service.Implementation
             IList<string> rolesList = _userManager.GetRolesAsync(user).Result;
 
             IList<Claim> claims = new List<Claim> { 
-                new Claim(JwtRegisteredClaimNames.Email, email)
+                new Claim(JwtRegisteredClaimNames.Email, email),
+                new Claim("Id", _unitOfWork.Users.ReadByEmail(email).Result.Id)
             };
 
             foreach(string role in rolesList)
